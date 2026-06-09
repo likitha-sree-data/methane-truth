@@ -998,7 +998,7 @@
         try {
             if (type === 'winter') {
                 const raw = await loadCSV('satellite_usa_winter.csv');
-                data = sampleData(raw, 15000);
+                data = sampleData(raw, 8000);
                 title = 'Winter Methane Concentrations - USA, January 2023';
                 bg = 1919.93;
                 cmin = 1870;
@@ -1030,7 +1030,7 @@
                 lon: data.lons,
                 mode: 'markers',
                 marker: {
-                    size: 5,
+                    size: 3,
                     color: data.vals,
                     colorscale: 'RdYlGn',
                     reversescale: true,
@@ -1049,11 +1049,11 @@
                 hovertemplate: '<b>%{text}</b><br>Lat: %{lat:.3f}<br>Lon: %{lon:.3f}<extra></extra>'
             };
 
-            const layout = {
+           const layout = {
                 mapbox: {
                     style: 'carto-positron',
-                    center: { lat: 38, lon: -96 },
-                    zoom: 3
+                    center: { lat: 39, lon: -98 },
+                    zoom: 4
                 },
                 title: {
                     text: title,
