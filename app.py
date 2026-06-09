@@ -621,13 +621,30 @@ with tab2:
             )
         )
         fig_trend.update_layout(
-            **PLOT_LAYOUT,
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='#f8f9fc',
+            font=dict(family='Inter', color='#4a5568', size=12),
+            title=dict(
+                font=dict(color='#0f2942', size=13, family='Inter'), x=0
+            ),
+            xaxis=dict(
+                gridcolor='#e5e9f0',
+                linecolor='#e5e9f0',
+                tickfont=dict(color='#6b7a99', size=11)
+            ),
             yaxis=dict(
                 range=[30, 42],
                 gridcolor='#e5e9f0',
                 linecolor='#e5e9f0',
                 tickfont=dict(color='#6b7a99', size=11)
-            )
+            ),
+            legend=dict(
+                bgcolor='#ffffff',
+                bordercolor='#e5e9f0',
+                borderwidth=1,
+                font=dict(color='#4a5568', size=11)
+            ),
+            margin=dict(l=10, r=10, t=40, b=10)
         )
         st.plotly_chart(fig_trend, use_container_width=True)
     
