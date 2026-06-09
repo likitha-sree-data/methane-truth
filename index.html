@@ -623,11 +623,11 @@
                 <div class="controls">
                     <button class="control-btn active" 
                             onclick="showMap('winter', this)">
-                        Winter — January 2023
+                        Winter - January 2023
                     </button>
                     <button class="control-btn" 
                             onclick="showMap('summer', this)">
-                        Summer — June to August 2023
+                        Summer - June to August 2023
                     </button>
                     <button class="control-btn" 
                             onclick="showMap('hotspots', this)">
@@ -960,51 +960,52 @@
             lats: generateLats(300, 24, 50),
             lons: generateLons(300, -125, -66),
             vals: generateVals(300, 1915, 1990),
-            title: 'Emission Hotspots — Pixels Exceeding NOAA Background',
+            title: 'Emission Hotspots - Pixels Exceeding NOAA Background',
             bg: 1915
         }
     };
 
     function generateLats(n, min, max) {
-        const arr = [];
-        // Gulf Coast cluster
-        for (let i = 0; i < n * 0.3; i++) {
-            arr.push(28 + Math.random() * 4);
-        }
-        // Northern Plains cluster
-        for (let i = 0; i < n * 0.2; i++) {
-            arr.push(44 + Math.random() * 4);
-        }
-        // California cluster
-        for (let i = 0; i < n * 0.15; i++) {
-            arr.push(35 + Math.random() * 3);
-        }
-        // Rest random
-        for (let i = arr.length; i < n; i++) {
-            arr.push(min + Math.random() * (max - min));
-        }
-        return arr;
+    const arr = [];
+    // Gulf Coast cluster - inland Texas Louisiana
+    for (let i = 0; i < n * 0.3; i++) {
+        arr.push(29 + Math.random() * 3);
     }
+    // Northern Plains cluster - North Dakota Minnesota
+    for (let i = 0; i < n * 0.2; i++) {
+        arr.push(46 + Math.random() * 2);
+    }
+    // California Central Valley cluster
+    for (let i = 0; i < n * 0.15; i++) {
+        arr.push(36 + Math.random() * 2);
+    }
+    // Rest random but constrained to land
+    for (let i = arr.length; i < n; i++) {
+        arr.push(25 + Math.random() * 22);
+    }
+    return arr;
+}
 
-    function generateLons(n, min, max) {
-        const arr = [];
-        // Gulf Coast
-        for (let i = 0; i < n * 0.3; i++) {
-            arr.push(-98 + Math.random() * 10);
-        }
-        // Northern Plains
-        for (let i = 0; i < n * 0.2; i++) {
-            arr.push(-100 + Math.random() * 8);
-        }
-        // California
-        for (let i = 0; i < n * 0.15; i++) {
-            arr.push(-122 + Math.random() * 4);
-        }
-        for (let i = arr.length; i < n; i++) {
-            arr.push(min + Math.random() * (max - min));
-        }
-        return arr;
+function generateLons(n, min, max) {
+    const arr = [];
+    // Gulf Coast cluster - inland not ocean
+    for (let i = 0; i < n * 0.3; i++) {
+        arr.push(-95 + Math.random() * 8);
     }
+    // Northern Plains cluster
+    for (let i = 0; i < n * 0.2; i++) {
+        arr.push(-101 + Math.random() * 6);
+    }
+    // California Central Valley cluster
+    for (let i = 0; i < n * 0.15; i++) {
+        arr.push(-120 + Math.random() * 3);
+    }
+    // Rest random but constrained to continental USA land
+    for (let i = arr.length; i < n; i++) {
+        arr.push(-120 + Math.random() * 55);
+    }
+    return arr;
+}
 
     function generateVals(n, min, max) {
         const arr = [];
