@@ -940,123 +940,142 @@
         if (name === 'maps') renderMap('winter');
     }
 
-    // Map data
-    const mapData = {
-        winter: {
-            lats: generateLats(500, 24, 47.4),
-            lons: generateLons(500, -123.2, -68.2),
-            vals: generateVals(500, 1870, 1976),
-            title: 'Winter Methane — USA, January 2023',
-            bg: 1919.93
-        },
-        summer: {
-            lats: generateLats(800, 24, 50),
-            lons: generateLons(800, -125, -66),
-            vals: generateVals(800, 1850, 1990),
-            title: 'Summer Methane — USA, June to August 2023',
-            bg: 1914.89
-        },
-        hotspots: {
-            lats: generateLats(300, 24, 50),
-            lons: generateLons(300, -125, -66),
-            vals: generateVals(300, 1915, 1990),
-            title: 'Emission Hotspots - Pixels Exceeding NOAA Background',
-            bg: 1915
+    
+    // Load real CSV data
+    let csvCache = {};
+
+    async function loadCSV(filename) {
+        if (csvCache[filename]) return csvCache[filename];
+        
+        const response = await fetch(filename);
+        const text = await response.text();
+        const lines = text.trim().split('\n');
+        const headers = lines[0].split(',');
+        
+        const data = { lats: [], lons: [], vals: [] };
+        
+        for (let i = 1; i < lines.length; i++) {
+            const cols = lines[i].split(',');
+            if (cols.length < 3) continue;
+            
+            const lat = parseFloat(cols[headers.indexOf('latitude')]);
+            const lon = parseFloat(cols[headers.indexOf('longitude')]);
+            const val = parseFloat(cols[headers.indexOf('methane_column_ppb')]);
+            
+            if (!isNaN(lat) && !isNaN(lon) && !isNaN(val)) {
+                data.lats.push(lat);
+                data.lons.push(lon);
+                data.vals.push(val);
+            }
         }
-    };
+        
+        csvCache[filename] = data;
+        return data;
+    }
 
-    function generateLats(n, min, max) {
-    const arr = [];
-    // Gulf Coast cluster - inland Texas Louisiana
-    for (let i = 0; i < n * 0.3; i++) {
-        arr.push(29 + Math.random() * 3);
-    }
-    // Northern Plains cluster - North Dakota Minnesota
-    for (let i = 0; i < n * 0.2; i++) {
-        arr.push(46 + Math.random() * 2);
-    }
-    // California Central Valley cluster
-    for (let i = 0; i < n * 0.15; i++) {
-        arr.push(36 + Math.random() * 2);
-    }
-    // Rest random but constrained to land
-    for (let i = arr.length; i < n; i++) {
-        arr.push(25 + Math.random() * 22);
-    }
-    return arr;
-}
-
-function generateLons(n, min, max) {
-    const arr = [];
-    // Gulf Coast cluster - inland not ocean
-    for (let i = 0; i < n * 0.3; i++) {
-        arr.push(-95 + Math.random() * 8);
-    }
-    // Northern Plains cluster
-    for (let i = 0; i < n * 0.2; i++) {
-        arr.push(-101 + Math.random() * 6);
-    }
-    // California Central Valley cluster
-    for (let i = 0; i < n * 0.15; i++) {
-        arr.push(-120 + Math.random() * 3);
-    }
-    // Rest random but constrained to continental USA land
-    for (let i = arr.length; i < n; i++) {
-        arr.push(-120 + Math.random() * 55);
-    }
-    return arr;
-}
-
-    function generateVals(n, min, max) {
-        const arr = [];
-        for (let i = 0; i < n; i++) {
-            arr.push(min + Math.random() * (max - min));
+    function sampleData(data, maxPoints) {
+        if (data.lats.length <= maxPoints) return data;
+        
+        const step = Math.floor(data.lats.length / maxPoints);
+        const sampled = { lats: [], lons: [], vals: [] };
+        
+        for (let i = 0; i < data.lats.length; i += step) {
+            sampled.lats.push(data.lats[i]);
+            sampled.lons.push(data.lons[i]);
+            sampled.vals.push(data.vals[i]);
         }
-        return arr;
+        
+        return sampled;
     }
 
-    function renderMap(type) {
-        const d = mapData[type];
-        const trace = {
-            type: 'scattermapbox',
-            lat: d.lats,
-            lon: d.lons,
-            mode: 'markers',
-            marker: {
-                size: 6,
-                color: d.vals,
-                colorscale: 'RdYlGn',
-                reversescale: true,
-                cmin: d.bg - 20,
-                cmax: d.bg + 70,
-                colorbar: {
-                    title: 'CH4 (ppb)',
-                    thickness: 12,
-                    len: 0.6,
-                    tickfont: { size: 10, color: '#64748b' },
-                    titlefont: { size: 11, color: '#4a5568' }
+    async function renderMap(type) {
+        document.getElementById('map-chart').innerHTML = 
+            '<div style="display:flex;align-items:center;justify-content:center;' +
+            'height:520px;color:#64748b;font-size:0.9rem;">Loading satellite data...</div>';
+        
+        let data, title, bg, cmin, cmax;
+        
+        try {
+            if (type === 'winter') {
+                const raw = await loadCSV('satellite_usa_winter.csv');
+                data = sampleData(raw, 15000);
+                title = 'Winter Methane Concentrations - USA, January 2023';
+                bg = 1919.93;
+                cmin = 1870;
+                cmax = 1980;
+            } else if (type === 'summer') {
+                const raw = await loadCSV('satellite_usa_summer.csv');
+                data = sampleData(raw, 15000);
+                title = 'Summer Methane Concentrations - USA, June to August 2023';
+                bg = 1914.89;
+                cmin = 1850;
+                cmax = 1995;
+            } else {
+                const winterH = await loadCSV('winter_hotspots.csv');
+                const summerH = await loadCSV('summer_hotspots.csv');
+                data = {
+                    lats: [...winterH.lats, ...summerH.lats],
+                    lons: [...winterH.lons, ...summerH.lons],
+                    vals: [...winterH.vals, ...summerH.vals]
+                };
+                title = 'Emission Hotspots - Pixels Exceeding NOAA Background';
+                bg = 1915;
+                cmin = 1915;
+                cmax = 1995;
+            }
+            
+            const trace = {
+                type: 'scattermapbox',
+                lat: data.lats,
+                lon: data.lons,
+                mode: 'markers',
+                marker: {
+                    size: 5,
+                    color: data.vals,
+                    colorscale: 'RdYlGn',
+                    reversescale: true,
+                    cmin: cmin,
+                    cmax: cmax,
+                    colorbar: {
+                        title: 'CH4 (ppb)',
+                        thickness: 12,
+                        len: 0.6,
+                        tickfont: { size: 10, color: '#64748b' },
+                        titlefont: { size: 11, color: '#4a5568' }
+                    },
+                    opacity: 0.75
                 },
-                opacity: 0.8
-            },
-            text: d.vals.map(v => v.toFixed(1) + ' ppb'),
-            hovertemplate: '<b>%{text}</b><extra></extra>'
-        };
+                text: data.vals.map(v => v.toFixed(1) + ' ppb'),
+                hovertemplate: '<b>%{text}</b><br>Lat: %{lat:.3f}<br>Lon: %{lon:.3f}<extra></extra>'
+            };
 
-        const layout = {
-            mapbox: {
-                style: 'carto-positron',
-                center: { lat: 38, lon: -96 },
-                zoom: 3
-            },
-            margin: { r: 0, t: 0, l: 0, b: 0 },
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(0,0,0,0)'
-        };
+            const layout = {
+                mapbox: {
+                    style: 'carto-positron',
+                    center: { lat: 38, lon: -96 },
+                    zoom: 3
+                },
+                title: {
+                    text: title,
+                    font: { size: 13, color: '#0f2942', family: '-apple-system, sans-serif' },
+                    x: 0
+                },
+                margin: { r: 0, t: 40, l: 0, b: 0 },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)'
+            };
 
-        Plotly.newPlot('map-chart', [trace], layout, { 
-            responsive: true, 
-            displayModeBar: false 
-        });
+            Plotly.newPlot('map-chart', [trace], layout, { 
+                responsive: true, 
+                displayModeBar: false 
+            });
+            
+        } catch (error) {
+            document.getElementById('map-chart').innerHTML = 
+                '<div style="display:flex;align-items:center;justify-content:center;' +
+                'height:520px;color:#e53e3e;font-size:0.9rem;">Error loading data: ' + 
+                error.message + '</div>';
+        }
     }
 
     function showMap(type, btn) {
