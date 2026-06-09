@@ -1,0 +1,11 @@
+metric,value
+winter_satellite_mean_ppb,1904.7349853515625
+summer_satellite_mean_ppb,1894.919921875
+winter_noaa_background_ppb,1919.93
+summer_noaa_background_ppb,1914.89
+winter_enhancement_ppb,-15.195068359375
+summer_enhancement_ppb,-19.9700927734375
+winter_implied_Mt_CH4,0.0
+summer_implied_Mt_CH4,0.0
+official_reported_Mt_CH4,35.5
+previous_incorrect_background_ppb,1870.0
