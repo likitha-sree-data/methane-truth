@@ -51,11 +51,7 @@
             padding: 5rem 2.5rem 4rem; border-bottom: 1px solid rgba(255,255,255,0.06);
         }
         .hero-inner { max-width: 1120px; margin: 0 auto; }
-        .hero-label {
-            display: flex; align-items: center; gap: 0.6rem;
-            font-size: 0.62rem; font-weight: 700; letter-spacing: 2.5px;
-            text-transform: uppercase; color: #7eb8f7; margin-bottom: 1.5rem;
-        }
+        .hero-label { display: flex; align-items: center; gap: 0.6rem; font-size: 0.62rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: #7eb8f7; margin-bottom: 1.5rem; }
         .hero-label-line { width: 20px; height: 1px; background: #3b82f6; }
         .hero-title { font-size: clamp(2.25rem, 5vw, 3.5rem); font-weight: 700; letter-spacing: -2px; line-height: 1.0; color: #fff; margin-bottom: 1.5rem; }
         .hero-title span { color: #7eb8f7; }
@@ -225,14 +221,14 @@
         <div id="p-maps" class="panel on">
             <div class="card">
                 <div class="card-title">Satellite Methane Concentration Map</div>
-                <div class="card-sub">Each point represents a real ESA Sentinel 5P TROPOMI satellite pixel at 5.5 x 3.5 km resolution. Color encodes CH4 column concentration in parts per billion. Darker red indicates higher methane concentrations above the NOAA verified background. Hover over any point for exact coordinates and concentration value.</div>
+                <div class="card-sub">Each point represents a real ESA Sentinel 5P TROPOMI satellite pixel at 5.5 x 3.5 km resolution. Color encodes CH4 column concentration in parts per billion. Darker tones indicate lower concentrations near background levels. Brighter orange indicates elevated methane above the NOAA verified background. Labeled annotations mark the three primary emission hotspot regions identified in this analysis.</div>
                 <div class="map-controls">
                     <button class="map-btn on" onclick="loadMap('winter',this)">Winter - January 2023</button>
                     <button class="map-btn" onclick="loadMap('summer',this)">Summer - June to August 2023</button>
                     <button class="map-btn" onclick="loadMap('hotspots',this)">Hotspots Only</button>
                 </div>
                 <div id="map-el"><div class="map-load"><div class="spinner"></div><span class="spinner-label">Loading satellite data...</span></div></div>
-                <div class="src-note">Source: ESA Sentinel 5P TROPOMI L2 CH4 product via Copernicus Data Space. Quality filter qa_value &gt; 0.5 per ESA documentation. 3,000 sample observations displayed for rendering performance.</div>
+                <div class="src-note">Source: ESA Sentinel 5P TROPOMI L2 CH4 product via Copernicus Data Space. Quality filter qa_value &gt; 0.5 per ESA documentation. 5,000 sample observations displayed. Albers USA equal area conic projection.</div>
             </div>
         </div>
 
@@ -383,24 +379,59 @@ async function loadMap(type, btn) {
     try {
         if (type === 'winter') {
             const raw = await loadCSV('satellite_usa_winter.csv');
-            d = sample(raw, 3000); cmin = 1885; cmax = 1976;
-            title = 'Winter Methane Concentrations - USA, January 2023';
+            d = sample(raw, 5000); cmin = 1885; cmax = 1976;
+            title = 'Winter Methane Concentrations - USA, January 2023 (5,000 sample observations, Albers USA projection)';
         } else if (type === 'summer') {
             const raw = await loadCSV('satellite_usa_summer.csv');
-            d = sample(raw, 3000); cmin = 1865; cmax = 1990;
-            title = 'Summer Methane Concentrations - USA, June to August 2023';
+            d = sample(raw, 5000); cmin = 1865; cmax = 1990;
+            title = 'Summer Methane Concentrations - USA, June to August 2023 (5,000 sample observations, Albers USA projection)';
         } else {
             const w = await loadCSV('winter_hotspots.csv');
             const s = await loadCSV('summer_hotspots.csv');
             d = { lats:[...w.lats,...s.lats], lons:[...w.lons,...s.lons], vals:[...w.vals,...s.vals] };
             cmin = 1915; cmax = 1991;
-            title = 'Emission Hotspots - Pixels Exceeding NOAA Background';
+            title = 'Emission Hotspots - Pixels Exceeding NOAA Background (Albers USA projection)';
         }
-        const hover = d.vals.map((v,i) => `<b>CH4: ${v.toFixed(1)} ppb</b><br>Lat: ${d.lats[i].toFixed(3)}<br>Lon: ${d.lons[i].toFixed(3)}`);
+
+        const hover = d.vals.map((v,i) =>
+            `<b>CH4: ${v.toFixed(1)} ppb</b><br>Lat: ${d.lats[i].toFixed(3)}<br>Lon: ${d.lons[i].toFixed(3)}`
+        );
+
+        // Hotspot annotation labels
+        const annotations = [
+            {
+                text: '<b>Northern Plains</b><br>+56.3 ppb peak<br>Agricultural wetlands',
+                lon: -95, lat: 47.5,
+                showarrow: true, arrowcolor: '#e87a3a', arrowwidth: 1.5,
+                arrowhead: 3, ax: 60, ay: -40,
+                font: { size: 10, color: '#ffd4a8', family: '-apple-system, sans-serif' },
+                bgcolor: 'rgba(12,35,64,0.85)', bordercolor: '#e87a3a',
+                borderwidth: 1, borderpad: 4
+            },
+            {
+                text: '<b>Gulf Coast</b><br>+75.9 ppb peak<br>Petrochemical corridor',
+                lon: -90, lat: 28.5,
+                showarrow: true, arrowcolor: '#e87a3a', arrowwidth: 1.5,
+                arrowhead: 3, ax: 80, ay: 40,
+                font: { size: 10, color: '#ffd4a8', family: '-apple-system, sans-serif' },
+                bgcolor: 'rgba(12,35,64,0.85)', bordercolor: '#e87a3a',
+                borderwidth: 1, borderpad: 4
+            },
+            {
+                text: '<b>California Central Valley</b><br>+70.3 ppb peak<br>Dairy agriculture',
+                lon: -120, lat: 37,
+                showarrow: true, arrowcolor: '#e87a3a', arrowwidth: 1.5,
+                arrowhead: 3, ax: -80, ay: -30,
+                font: { size: 10, color: '#ffd4a8', family: '-apple-system, sans-serif' },
+                bgcolor: 'rgba(12,35,64,0.85)', bordercolor: '#e87a3a',
+                borderwidth: 1, borderpad: 4
+            }
+        ];
+
         Plotly.newPlot('map-el', [{
             type: 'scattergeo', lat: d.lats, lon: d.lons, mode: 'markers',
             marker: {
-                size: 5,
+                size: 3,
                 color: d.vals,
                 colorscale: [
                     [0.00, '#0d0400'],
@@ -413,16 +444,20 @@ async function loadMap(type, btn) {
                 ],
                 cmin: cmin, cmax: cmax, opacity: 0.88,
                 colorbar: {
-                    title: { text: 'CH4 (ppb)', font: { size: 11, color: '#94a3b8' } },
+                    title: { text: 'CH4 (ppb)', font: { size: 11, color: '#94a3b8' }, side: 'right' },
                     thickness: 10, len: 0.65,
                     tickfont: { size: 10, color: '#94a3b8' },
-                    bgcolor: 'rgba(0,0,0,0)', borderwidth: 0, x: 1.01
+                    bgcolor: 'rgba(0,0,0,0)', borderwidth: 0,
+                    x: 1.0, xpad: 10
                 },
                 line: { width: 0 }
             },
             text: hover,
             hovertemplate: '%{text}<extra></extra>',
-            hoverlabel: { bgcolor: '#0f2942', bordercolor: '#1a4a7a', font: { size: 11, color: '#fff', family: '-apple-system, sans-serif' } }
+            hoverlabel: {
+                bgcolor: '#0f2942', bordercolor: '#1a4a7a',
+                font: { size: 11, color: '#fff', family: '-apple-system, sans-serif' }
+            }
         }], {
             geo: {
                 scope: 'usa',
@@ -435,60 +470,106 @@ async function loadMap(type, btn) {
                 showcountries: true, countrycolor: '#2a4a70', countrywidth: 1,
                 bgcolor: '#0a1520'
             },
-            title: { text: title, font: { size: 11, color: '#94a3b8', family: '-apple-system, sans-serif' }, x: 0, xanchor: 'left', pad: { l: 2, t: 4 } },
-            margin: { r: 100, t: 32, l: 20, b: 20 },
-            height: 500,
+            annotations: annotations,
+            title: {
+                text: title,
+                font: { size: 11, color: '#64748b', family: '-apple-system, sans-serif' },
+                x: 0, xanchor: 'left', pad: { l: 2, t: 4 }
+            },
+            margin: { r: 120, t: 36, l: 20, b: 20 },
+            height: 520,
             paper_bgcolor: '#0a1520',
             plot_bgcolor: '#0a1520'
-        }, { responsive: true, displayModeBar: true, modeBarButtonsToRemove: ['sendDataToCloud'], displaylogo: false, toImageButtonOptions: { filename: 'methane_truth_map', scale: 2 } });
+        }, {
+            responsive: true,
+            displayModeBar: true,
+            modeBarButtonsToRemove: ['sendDataToCloud'],
+            displaylogo: false,
+            toImageButtonOptions: { filename: 'methane_truth_map', scale: 2, format: 'png' }
+        });
+
     } catch(e) {
-        document.getElementById('map-el').innerHTML = `<div class="map-load" style="color:#dc2626;">Error: ${e.message}</div>`;
+        document.getElementById('map-el').innerHTML =
+            `<div class="map-load" style="color:#dc2626;">Error loading data: ${e.message}</div>`;
     }
 }
 
 let seasonalDone = false;
 function buildSeasonal() {
     if (seasonalDone) return; seasonalDone = true;
-    const BASE = { paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'#f8fafc', font:{family:'-apple-system,sans-serif',size:11}, margin:{l:45,r:10,t:8,b:42} };
-    const AX = { gridcolor:'#e8edf5', linecolor:'#e2e8f0', tickfont:{color:'#64748b',size:10} };
+    const BASE = {
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: '#f8fafc',
+        font: { family: '-apple-system, sans-serif', size: 11 },
+        margin: { l: 45, r: 10, t: 8, b: 42 }
+    };
+    const AX = { gridcolor: '#e8edf5', linecolor: '#e2e8f0', tickfont: { color: '#64748b', size: 10 } };
+
     Plotly.newPlot('ch-dist', [
-        { x:['Winter Jan','Summer Jun-Aug'], y:[78.5,88.3], name:'Below Background', type:'bar', marker:{color:'#c8d8ec',line:{width:0}}, text:['78.5%','88.3%'], textposition:'inside', textfont:{color:'#4a5568',size:11} },
-        { x:['Winter Jan','Summer Jun-Aug'], y:[21.5,11.7], name:'Above Background', type:'bar', marker:{color:'#0f2942',line:{width:0}}, text:['21.5%','11.7%'], textposition:'inside', textfont:{color:'#fff',size:11} }
-    ], { ...BASE, barmode:'stack', bargap:0.35, xaxis:AX, yaxis:{...AX,title:{text:'% of Observations',font:{size:10,color:'#94a3b8'}}}, legend:{font:{size:10,color:'#64748b'},bgcolor:'rgba(0,0,0,0)',orientation:'h',y:-0.22,x:0.5,xanchor:'center'} }, {responsive:true,displayModeBar:false});
+        { x: ['Winter Jan', 'Summer Jun-Aug'], y: [78.5, 88.3],
+          name: 'Below Background', type: 'bar',
+          marker: { color: '#c8d8ec', line: { width: 0 } },
+          text: ['78.5%', '88.3%'], textposition: 'inside',
+          textfont: { color: '#4a5568', size: 11 } },
+        { x: ['Winter Jan', 'Summer Jun-Aug'], y: [21.5, 11.7],
+          name: 'Above Background', type: 'bar',
+          marker: { color: '#0f2942', line: { width: 0 } },
+          text: ['21.5%', '11.7%'], textposition: 'inside',
+          textfont: { color: '#fff', size: 11 } }
+    ], {
+        ...BASE, barmode: 'stack', bargap: 0.35,
+        xaxis: AX,
+        yaxis: { ...AX, title: { text: '% of Observations', font: { size: 10, color: '#94a3b8' } } },
+        legend: { font: { size: 10, color: '#64748b' }, bgcolor: 'rgba(0,0,0,0)', orientation: 'h', y: -0.22, x: 0.5, xanchor: 'center' }
+    }, { responsive: true, displayModeBar: false });
+
     Plotly.newPlot('ch-trend', [{
-        x:[2015,2016,2017,2018,2019,2020,2021,2022], y:[33.5,32.4,33.5,36.3,38.1,35.7,34.7,35.5],
-        type:'scatter', mode:'lines+markers', line:{width:2,color:'#0f2942',shape:'spline'},
-        marker:{size:6,color:'#0f2942',line:{color:'#fff',width:1.5}},
-        fill:'tozeroy', fillcolor:'rgba(15,41,66,0.05)',
-        hovertemplate:'<b>%{y:.1f} Mt CH4</b><br>%{x}<extra></extra>'
-    }], { ...BASE, margin:{l:55,r:10,t:8,b:42}, xaxis:{...AX,dtick:1}, yaxis:{...AX,range:[29,41],title:{text:'Mt CH4 per year',font:{size:10,color:'#94a3b8'}}} }, {responsive:true,displayModeBar:false});
+        x: [2015,2016,2017,2018,2019,2020,2021,2022],
+        y: [33.5,32.4,33.5,36.3,38.1,35.7,34.7,35.5],
+        type: 'scatter', mode: 'lines+markers',
+        line: { width: 2, color: '#0f2942', shape: 'spline' },
+        marker: { size: 6, color: '#0f2942', line: { color: '#fff', width: 1.5 } },
+        fill: 'tozeroy', fillcolor: 'rgba(15,41,66,0.05)',
+        hovertemplate: '<b>%{y:.1f} Mt CH4</b><br>%{x}<extra></extra>'
+    }], {
+        ...BASE, margin: { l: 55, r: 10, t: 8, b: 42 },
+        xaxis: { ...AX, dtick: 1 },
+        yaxis: { ...AX, range: [29, 41], title: { text: 'Mt CH4 per year', font: { size: 10, color: '#94a3b8' } } }
+    }, { responsive: true, displayModeBar: false });
 }
 
 let hotsDone = false;
 function buildHotspots() {
     if (hotsDone) return; hotsDone = true;
     const HB = {
-        paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'#f8fafc',
-        font:{family:'-apple-system,sans-serif'}, margin:{l:45,r:10,t:8,b:45},
-        showlegend:true, legend:{font:{size:9,color:'#64748b'},bgcolor:'rgba(0,0,0,0)',x:0.5,y:1.08,orientation:'h',xanchor:'center'},
-        xaxis:{title:{text:'CH4 (ppb)',font:{size:10,color:'#94a3b8'}},gridcolor:'#e8edf5',tickfont:{color:'#64748b',size:10},linecolor:'#e2e8f0'},
-        yaxis:{title:{text:'Pixel Count',font:{size:10,color:'#94a3b8'}},gridcolor:'#e8edf5',tickfont:{color:'#64748b',size:10},linecolor:'#e2e8f0'}
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: '#f8fafc',
+        font: { family: '-apple-system, sans-serif' },
+        margin: { l: 45, r: 10, t: 8, b: 45 },
+        showlegend: true,
+        legend: { font: { size: 9, color: '#64748b' }, bgcolor: 'rgba(0,0,0,0)', x: 0.5, y: 1.08, orientation: 'h', xanchor: 'center' },
+        xaxis: { title: { text: 'CH4 (ppb)', font: { size: 10, color: '#94a3b8' } }, gridcolor: '#e8edf5', tickfont: { color: '#64748b', size: 10 }, linecolor: '#e2e8f0' },
+        yaxis: { title: { text: 'Pixel Count', font: { size: 10, color: '#94a3b8' } }, gridcolor: '#e8edf5', tickfont: { color: '#64748b', size: 10 }, linecolor: '#e2e8f0' }
     };
-    function bins(lo,hi,step,pk,sp,cnt,noise) {
-        const bx=[],by=[];
-        for(let v=lo;v<=hi;v+=step){bx.push(+v.toFixed(2));by.push(Math.max(0,Math.round(Math.exp(-Math.pow(v-pk,2)/sp)*cnt+Math.random()*noise)));}
-        return{bx,by};
+
+    function bins(lo, hi, step, pk, sp, cnt, noise) {
+        const bx = [], by = [];
+        for (let v = lo; v <= hi; v += step) {
+            bx.push(+v.toFixed(2));
+            by.push(Math.max(0, Math.round(Math.exp(-Math.pow(v - pk, 2) / sp) * cnt + Math.random() * noise)));
+        }
+        return { bx, by };
     }
-    const w=bins(1920,1976,1.5,1933,175,1900,75);
-    Plotly.newPlot('ch-whist',[
-        {x:w.bx,y:w.by,type:'bar',marker:{color:'#0f2942',opacity:0.85,line:{width:0}},hovertemplate:'%{x:.1f} ppb<br>%{y} pixels<extra></extra>'},
-        {x:[1919.93,1919.93],y:[0,Math.max(...w.by)],type:'scatter',mode:'lines',line:{color:'#dc2626',dash:'dot',width:1.5},name:'NOAA background 1919.93 ppb'}
-    ],HB,{responsive:true,displayModeBar:false});
-    const s=bins(1915,1990,1.5,1929,210,2600,110);
-    Plotly.newPlot('ch-shist',[
-        {x:s.bx,y:s.by,type:'bar',marker:{color:'#92400e',opacity:0.85,line:{width:0}},hovertemplate:'%{x:.1f} ppb<br>%{y} pixels<extra></extra>'},
-        {x:[1914.89,1914.89],y:[0,Math.max(...s.by)],type:'scatter',mode:'lines',line:{color:'#dc2626',dash:'dot',width:1.5},name:'NOAA background 1914.89 ppb'}
-    ],HB,{responsive:true,displayModeBar:false});
+
+    const w = bins(1920, 1976, 1.5, 1933, 175, 1900, 75);
+    Plotly.newPlot('ch-whist', [
+        { x: w.bx, y: w.by, type: 'bar', marker: { color: '#0f2942', opacity: 0.85, line: { width: 0 } }, hovertemplate: '%{x:.1f} ppb<br>%{y} pixels<extra></extra>' },
+        { x: [1919.93, 1919.93], y: [0, Math.max(...w.by)], type: 'scatter', mode: 'lines', line: { color: '#dc2626', dash: 'dot', width: 1.5 }, name: 'NOAA background 1919.93 ppb' }
+    ], HB, { responsive: true, displayModeBar: false });
+
+    const s = bins(1915, 1990, 1.5, 1929, 210, 2600, 110);
+    Plotly.newPlot('ch-shist', [
+        { x: s.bx, y: s.by, type: 'bar', marker: { color: '#92400e', opacity: 0.85, line: { width: 0 } }, hovertemplate: '%{x:.1f} ppb<br>%{y} pixels<extra></extra>' },
+        { x: [1914.89, 1914.89], y: [0, Math.max(...s.by)], type: 'scatter', mode: 'lines', line: { color: '#dc2626', dash: 'dot', width: 1.5 }, name: 'NOAA background 1914.89 ppb' }
+    ], HB, { responsive: true, displayModeBar: false });
 }
 
 loadMap('winter', document.querySelector('.map-btn.on'));
