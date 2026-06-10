@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="304,611 ESA Sentinel 5P TROPOMI satellite methane observations analyzed over the continental USA and compared against official UNFCCC inventory submissions using NOAA verified background values.">
-    <meta name="keywords" content="methane, satellite, ESA, Sentinel 5P, TROPOMI, UNFCCC, climate, emissions, carbon, data science, open source, climate intelligence">
+    <meta name="keywords" content="methane, satellite, ESA, Sentinel 5P, TROPOMI, UNFCCC, climate, emissions, carbon, data science, open source">
     <meta name="author" content="Likitha Yarabarla">
     <meta property="og:title" content="The Methane Truth | Satellite vs Official Reports">
     <meta property="og:description" content="304,611 real satellite observations reveal where methane is actually coming from in America.">
@@ -13,14 +13,11 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
         :root {
             --navy: #0c2340;
             --navy-mid: #0f2942;
-            --navy-light: #1a3f6a;
             --blue: #1a4a7a;
             --accent: #c44d00;
-            --accent-light: #e87a3a;
             --text-primary: #0f2942;
             --text-secondary: #4a5568;
             --text-muted: #94a3b8;
@@ -29,49 +26,29 @@
             --bg-card: #ffffff;
             --bg-subtle: #f8fafc;
         }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text-primary);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg); color: var(--text-primary);
+            line-height: 1.6; -webkit-font-smoothing: antialiased;
         }
-
-        /* HEADER */
         .header {
-            background: var(--navy);
-            height: 52px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 2.5rem;
-            position: sticky;
-            top: 0;
-            z-index: 200;
+            background: var(--navy); height: 52px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2.5rem; position: sticky; top: 0; z-index: 200;
             border-bottom: 1px solid rgba(255,255,255,0.06);
         }
         .header-left { display: flex; align-items: center; gap: 0.875rem; }
         .header-dot { width: 6px; height: 6px; background: #3b82f6; border-radius: 50%; }
-        .header-brand { font-size: 0.875rem; font-weight: 600; color: #fff; letter-spacing: -0.1px; }
-        .header-pipe { color: rgba(255,255,255,0.15); font-size: 0.75rem; }
-        .header-meta { font-size: 0.72rem; color: #7eb8f7; letter-spacing: 0.1px; }
+        .header-brand { font-size: 0.875rem; font-weight: 600; color: #fff; }
+        .header-pipe { color: rgba(255,255,255,0.15); }
+        .header-meta { font-size: 0.72rem; color: #7eb8f7; }
         .header-nav { display: flex; gap: 1.75rem; }
-        .header-nav a {
-            color: rgba(255,255,255,0.55); text-decoration: none;
-            font-size: 0.78rem; font-weight: 500;
-            transition: color 0.15s; letter-spacing: 0.1px;
-        }
+        .header-nav a { color: rgba(255,255,255,0.55); text-decoration: none; font-size: 0.78rem; font-weight: 500; transition: color 0.15s; }
         .header-nav a:hover { color: #fff; }
-
-        /* HERO */
         .hero {
             background: var(--navy);
-            background-image: 
-                radial-gradient(ellipse at 70% 50%, rgba(26,74,122,0.4) 0%, transparent 60%),
-                radial-gradient(ellipse at 20% 80%, rgba(12,35,64,0.8) 0%, transparent 50%);
-            padding: 5rem 2.5rem 4rem;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            background-image: radial-gradient(ellipse at 70% 50%, rgba(26,74,122,0.4) 0%, transparent 60%);
+            padding: 5rem 2.5rem 4rem; border-bottom: 1px solid rgba(255,255,255,0.06);
         }
         .hero-inner { max-width: 1120px; margin: 0 auto; }
         .hero-label {
@@ -80,222 +57,77 @@
             text-transform: uppercase; color: #7eb8f7; margin-bottom: 1.5rem;
         }
         .hero-label-line { width: 20px; height: 1px; background: #3b82f6; }
-        .hero-title {
-            font-size: clamp(2.25rem, 5vw, 3.5rem);
-            font-weight: 700; letter-spacing: -2px; line-height: 1.0;
-            color: #fff; margin-bottom: 1.5rem;
-        }
+        .hero-title { font-size: clamp(2.25rem, 5vw, 3.5rem); font-weight: 700; letter-spacing: -2px; line-height: 1.0; color: #fff; margin-bottom: 1.5rem; }
         .hero-title span { color: #7eb8f7; }
-        .hero-subtitle {
-            font-size: 1rem; color: rgba(168,200,240,0.9);
-            max-width: 580px; line-height: 1.8; margin-bottom: 2.5rem;
-            font-weight: 400;
-        }
+        .hero-subtitle { font-size: 1rem; color: rgba(168,200,240,0.9); max-width: 580px; line-height: 1.8; margin-bottom: 2.5rem; }
         .hero-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 3.5rem; }
-        .hero-tag {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: rgba(200,224,248,0.8);
-            padding: 0.2rem 0.7rem; border-radius: 2px;
-            font-size: 0.66rem; font-weight: 500; letter-spacing: 0.3px;
-        }
-        .hero-stats {
-            display: flex; gap: 0;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            padding-top: 2.5rem;
-        }
+        .hero-tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(200,224,248,0.8); padding: 0.2rem 0.7rem; border-radius: 2px; font-size: 0.66rem; font-weight: 500; }
+        .hero-stats { display: flex; gap: 0; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 2.5rem; }
         .hero-stat { padding-right: 3rem; margin-right: 3rem; border-right: 1px solid rgba(255,255,255,0.08); }
         .hero-stat:last-child { border-right: none; padding-right: 0; margin-right: 0; }
-        .hero-stat-val {
-            font-size: 2.25rem; font-weight: 700; color: #fff;
-            letter-spacing: -1px; line-height: 1;
-        }
-        .hero-stat-lbl {
-            font-size: 0.65rem; color: #7eb8f7; margin-top: 0.35rem;
-            text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
-        }
-
-        /* KPI STRIP */
-        .kpi-strip {
-            display: grid; grid-template-columns: repeat(5, 1fr);
-            background: #fff; border-bottom: 1px solid var(--border);
-        }
-        .kpi {
-            padding: 1.25rem 1.75rem;
-            border-right: 1px solid var(--border);
-            position: relative;
-        }
-        .kpi::after {
-            content: ''; position: absolute; bottom: 0; left: 0;
-            width: 0; height: 2px; background: var(--navy);
-            transition: width 0.3s ease;
-        }
+        .hero-stat-val { font-size: 2.25rem; font-weight: 700; color: #fff; letter-spacing: -1px; line-height: 1; }
+        .hero-stat-lbl { font-size: 0.65rem; color: #7eb8f7; margin-top: 0.35rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .kpi-strip { display: grid; grid-template-columns: repeat(5, 1fr); background: #fff; border-bottom: 1px solid var(--border); }
+        .kpi { padding: 1.25rem 1.75rem; border-right: 1px solid var(--border); position: relative; }
+        .kpi::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--navy); transition: width 0.3s ease; }
         .kpi:hover::after { width: 100%; }
         .kpi:last-child { border-right: none; }
-        .kpi-lbl {
-            font-size: 0.62rem; font-weight: 700; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.4rem;
-        }
-        .kpi-val {
-            font-size: 1.65rem; font-weight: 700; color: var(--navy);
-            letter-spacing: -0.5px; line-height: 1; margin-bottom: 0.25rem;
-        }
+        .kpi-lbl { font-size: 0.62rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.4rem; }
+        .kpi-val { font-size: 1.65rem; font-weight: 700; color: var(--navy); letter-spacing: -0.5px; line-height: 1; margin-bottom: 0.25rem; }
         .kpi-note { font-size: 0.7rem; color: var(--text-muted); }
-
-        /* MAIN */
         .main { max-width: 1240px; margin: 0 auto; padding: 2.5rem 2rem; }
         .section { margin-bottom: 3rem; }
-        .sec-label {
-            font-size: 0.6rem; font-weight: 700; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 2.5px;
-            margin-bottom: 1.25rem; padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; gap: 0.6rem;
-        }
-        .sec-label::before {
-            content: ''; display: block; width: 3px; height: 12px;
-            background: var(--navy); border-radius: 1px;
-        }
-
-        /* FINDINGS */
-        .findings-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 1px; background: var(--border);
-            border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
-        }
-        .finding {
-            background: #fff; padding: 2rem;
-            transition: background 0.15s;
-        }
+        .sec-label { font-size: 0.6rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.6rem; }
+        .sec-label::before { content: ''; display: block; width: 3px; height: 12px; background: var(--navy); border-radius: 1px; }
+        .findings-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .finding { background: #fff; padding: 2rem; transition: background 0.15s; }
         .finding:hover { background: var(--bg-subtle); }
-        .finding-num {
-            font-size: 0.58rem; font-weight: 700; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.6rem;
-        }
-        .finding-region {
-            font-size: 0.72rem; font-weight: 700; color: var(--navy);
-            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem;
-        }
-        .finding-val {
-            font-size: 2.75rem; font-weight: 700; color: var(--accent);
-            letter-spacing: -1.5px; line-height: 1; margin-bottom: 0.5rem;
-        }
-        .finding-peak {
-            font-size: 0.78rem; color: var(--text-secondary);
-            margin-bottom: 0.75rem; font-weight: 500;
-        }
+        .finding-num { font-size: 0.58rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.6rem; }
+        .finding-region { font-size: 0.72rem; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
+        .finding-val { font-size: 2.75rem; font-weight: 700; color: var(--accent); letter-spacing: -1.5px; line-height: 1; margin-bottom: 0.5rem; }
+        .finding-peak { font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 0.75rem; font-weight: 500; }
         .finding-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.65; }
-        .badge {
-            display: inline-block; padding: 0.1rem 0.45rem;
-            border-radius: 2px; font-size: 0.62rem; font-weight: 700;
-            letter-spacing: 0.3px; vertical-align: middle;
-        }
+        .badge { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 2px; font-size: 0.62rem; font-weight: 700; vertical-align: middle; }
         .badge-w { background: #dbeafe; color: #1e40af; }
         .badge-s { background: #fef3c7; color: #92400e; }
-
-        /* TABS */
         .tabs-wrap { border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
         .tabs { display: flex; }
-        .tab {
-            background: none; border: none; border-bottom: 2px solid transparent;
-            padding: 0.7rem 1.4rem; font-size: 0.8rem; font-weight: 500;
-            color: var(--text-muted); cursor: pointer; margin-bottom: -1px;
-            transition: all 0.15s; font-family: inherit; letter-spacing: 0.1px;
-        }
+        .tab { background: none; border: none; border-bottom: 2px solid transparent; padding: 0.7rem 1.4rem; font-size: 0.8rem; font-weight: 500; color: var(--text-muted); cursor: pointer; margin-bottom: -1px; transition: all 0.15s; font-family: inherit; }
         .tab:hover { color: var(--navy); }
         .tab.on { color: var(--navy); border-bottom-color: var(--navy); font-weight: 600; }
         .panel { display: none; }
         .panel.on { display: block; }
-
-        /* CARDS */
-        .card {
-            background: #fff; border: 1px solid var(--border);
-            border-radius: 8px; padding: 1.5rem; margin-bottom: 1.25rem;
-        }
+        .card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.25rem; }
         .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; }
         .card-half { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; }
         .card-title { font-size: 0.8rem; font-weight: 600; color: var(--navy); margin-bottom: 0.2rem; }
         .card-sub { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.4; }
-
-        /* MAP CONTROLS */
         .map-controls { display: flex; gap: 0.35rem; margin-bottom: 1rem; }
-        .map-btn {
-            background: #fff; border: 1px solid var(--border);
-            padding: 0.3rem 0.9rem; border-radius: 3px;
-            font-size: 0.75rem; font-weight: 500; color: var(--text-secondary);
-            cursor: pointer; transition: all 0.12s; font-family: inherit;
-        }
+        .map-btn { background: #fff; border: 1px solid var(--border); padding: 0.3rem 0.9rem; border-radius: 3px; font-size: 0.75rem; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 0.12s; font-family: inherit; }
         .map-btn:hover { border-color: var(--navy); color: var(--navy); }
         .map-btn.on { background: var(--navy); border-color: var(--navy); color: #fff; }
-
-        /* TABLE */
         table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
-        thead th {
-            background: var(--bg-subtle); padding: 0.6rem 0.9rem; text-align: left;
-            font-size: 0.6rem; font-weight: 700; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 0.8px;
-            border-bottom: 2px solid var(--border);
-        }
+        thead th { background: var(--bg-subtle); padding: 0.6rem 0.9rem; text-align: left; font-size: 0.6rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; border-bottom: 2px solid var(--border); }
         tbody td { padding: 0.65rem 0.9rem; border-bottom: 1px solid #f1f5f9; color: var(--text-primary); }
         tbody tr:last-child td { border-bottom: none; }
         tbody tr:hover td { background: var(--bg-subtle); }
         .num-pos { color: #16a34a; font-weight: 600; }
         .num-neg { color: #dc2626; font-weight: 600; }
         .row-total { font-weight: 700; background: var(--bg-subtle) !important; }
-
-        /* INSIGHT BOX */
-        .insight {
-            background: #f0f6ff; border: 1px solid #c3d9f7;
-            border-left: 3px solid var(--navy); border-radius: 6px;
-            padding: 1.2rem 1.5rem; font-size: 0.84rem;
-            color: #1e3a5f; line-height: 1.75;
-        }
+        .insight { background: #f0f6ff; border: 1px solid #c3d9f7; border-left: 3px solid var(--navy); border-radius: 6px; padding: 1.2rem 1.5rem; font-size: 0.84rem; color: #1e3a5f; line-height: 1.75; }
         .insight strong { color: var(--navy); }
-
-        /* METHOD */
         .method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .method-card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 1.75rem; }
-        .method-card h4 {
-            font-size: 0.6rem; font-weight: 700; color: var(--navy);
-            text-transform: uppercase; letter-spacing: 1.5px;
-            margin-bottom: 1rem; padding-bottom: 0.6rem;
-            border-bottom: 1px solid var(--border);
-        }
-        .method-card p, .method-card li {
-            font-size: 0.8rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 0.5rem;
-        }
+        .method-card h4 { font-size: 0.6rem; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border); }
+        .method-card p, .method-card li { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 0.5rem; }
         .method-card ul { padding-left: 1.1rem; }
         .method-card strong { color: var(--text-primary); }
-
-        /* SOURCE NOTE */
-        .src-note {
-            font-size: 0.66rem; color: var(--text-muted);
-            margin-top: 0.75rem; padding-top: 0.75rem;
-            border-top: 1px solid var(--border);
-        }
-
-        /* MAP LOADING */
-        .map-load {
-            display: flex; align-items: center; justify-content: center;
-            height: 500px; flex-direction: column; gap: 0.75rem;
-            color: var(--text-muted); font-size: 0.82rem;
-            background: #0d1929; border-radius: 4px;
-        }
-        .spinner {
-            width: 24px; height: 24px; border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.1);
-            border-top-color: #3b82f6;
-            animation: spin 0.8s linear infinite;
-        }
-        .spinner-label { color: rgba(255,255,255,0.5); font-size: 0.78rem; }
+        .src-note { font-size: 0.66rem; color: var(--text-muted); margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+        .map-load { display: flex; align-items: center; justify-content: center; height: 500px; flex-direction: column; gap: 0.75rem; background: #0a1520; border-radius: 4px; }
+        .spinner { width: 24px; height: 24px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.1); border-top-color: #3b82f6; animation: spin 0.8s linear infinite; }
+        .spinner-label { color: rgba(255,255,255,0.4); font-size: 0.78rem; }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* FOOTER */
-        .footer {
-            background: var(--navy); color: #7eb8f7;
-            padding: 1.5rem 2.5rem; text-align: center;
-            font-size: 0.75rem; letter-spacing: 0.1px;
-        }
+        .footer { background: var(--navy); color: #7eb8f7; padding: 1.5rem 2.5rem; text-align: center; font-size: 0.75rem; }
         .footer a { color: #a8c8f0; text-decoration: none; font-weight: 500; }
         .footer a:hover { color: #fff; }
         .footer-sep { margin: 0 0.6rem; opacity: 0.25; }
@@ -303,7 +135,6 @@
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="header">
     <div class="header-left">
         <div class="header-dot"></div>
@@ -318,17 +149,11 @@
     </nav>
 </header>
 
-<!-- HERO -->
 <section class="hero">
     <div class="hero-inner">
         <div class="hero-label"><span class="hero-label-line"></span>Open Source Climate Intelligence</div>
         <h1 class="hero-title">The Methane <span>Truth</span></h1>
-        <p class="hero-subtitle">
-            304,611 ESA Sentinel 5P TROPOMI satellite observations processed over the
-            continental United States. January and June through August 2023.
-            Compared against official UNFCCC inventory submissions using NOAA
-            verified atmospheric background values.
-        </p>
+        <p class="hero-subtitle">304,611 ESA Sentinel 5P TROPOMI satellite observations processed over the continental United States. January and June through August 2023. Compared against official UNFCCC inventory submissions using NOAA verified atmospheric background values.</p>
         <div class="hero-tags">
             <span class="hero-tag">ESA Sentinel 5P</span>
             <span class="hero-tag">NOAA GML</span>
@@ -342,59 +167,23 @@
             <span class="hero-tag">Apache Airflow</span>
         </div>
         <div class="hero-stats">
-            <div class="hero-stat">
-                <div class="hero-stat-val">304,611</div>
-                <div class="hero-stat-lbl">Satellite Pixels</div>
-            </div>
-            <div class="hero-stat">
-                <div class="hero-stat-val">75.9 ppb</div>
-                <div class="hero-stat-lbl">Peak Enhancement</div>
-            </div>
-            <div class="hero-stat">
-                <div class="hero-stat-val">14.1%</div>
-                <div class="hero-stat-lbl">Above Background</div>
-            </div>
-            <div class="hero-stat">
-                <div class="hero-stat-val">3</div>
-                <div class="hero-stat-lbl">Hotspot Regions</div>
-            </div>
+            <div class="hero-stat"><div class="hero-stat-val">304,611</div><div class="hero-stat-lbl">Satellite Pixels</div></div>
+            <div class="hero-stat"><div class="hero-stat-val">75.9 ppb</div><div class="hero-stat-lbl">Peak Enhancement</div></div>
+            <div class="hero-stat"><div class="hero-stat-val">14.1%</div><div class="hero-stat-lbl">Above Background</div></div>
+            <div class="hero-stat"><div class="hero-stat-val">3</div><div class="hero-stat-lbl">Hotspot Regions</div></div>
         </div>
     </div>
 </section>
 
-<!-- KPI STRIP -->
 <div class="kpi-strip">
-    <div class="kpi">
-        <div class="kpi-lbl">Total Observations</div>
-        <div class="kpi-val">304,611</div>
-        <div class="kpi-note">Quality filtered &middot; qa_value &gt; 0.5</div>
-    </div>
-    <div class="kpi">
-        <div class="kpi-lbl">Winter Hotspot Pixels</div>
-        <div class="kpi-val">16,581</div>
-        <div class="kpi-note">21.5% of January 2023 observations</div>
-    </div>
-    <div class="kpi">
-        <div class="kpi-lbl">Summer Hotspot Pixels</div>
-        <div class="kpi-val">26,505</div>
-        <div class="kpi-note">11.7% of June to August 2023</div>
-    </div>
-    <div class="kpi">
-        <div class="kpi-lbl">Peak Enhancement</div>
-        <div class="kpi-val">75.9 ppb</div>
-        <div class="kpi-note">Gulf Coast &middot; above NOAA background</div>
-    </div>
-    <div class="kpi">
-        <div class="kpi-lbl">Official Reported</div>
-        <div class="kpi-val">35.5 Mt</div>
-        <div class="kpi-note">UNFCCC 2022 CH4 submission</div>
-    </div>
+    <div class="kpi"><div class="kpi-lbl">Total Observations</div><div class="kpi-val">304,611</div><div class="kpi-note">Quality filtered &middot; qa_value &gt; 0.5</div></div>
+    <div class="kpi"><div class="kpi-lbl">Winter Hotspot Pixels</div><div class="kpi-val">16,581</div><div class="kpi-note">21.5% of January 2023 observations</div></div>
+    <div class="kpi"><div class="kpi-lbl">Summer Hotspot Pixels</div><div class="kpi-val">26,505</div><div class="kpi-note">11.7% of June to August 2023</div></div>
+    <div class="kpi"><div class="kpi-lbl">Peak Enhancement</div><div class="kpi-val">75.9 ppb</div><div class="kpi-note">Gulf Coast &middot; above NOAA background</div></div>
+    <div class="kpi"><div class="kpi-lbl">Official Reported</div><div class="kpi-val">35.5 Mt</div><div class="kpi-note">UNFCCC 2022 CH4 submission</div></div>
 </div>
 
-<!-- MAIN -->
 <main class="main">
-
-    <!-- FINDINGS -->
     <section class="section">
         <div class="sec-label">Primary Findings</div>
         <div class="findings-grid">
@@ -422,10 +211,8 @@
         </div>
     </section>
 
-    <!-- ANALYSIS TABS -->
     <section class="section">
         <div class="sec-label">Analysis</div>
-
         <div class="tabs-wrap">
             <div class="tabs">
                 <button class="tab on" onclick="switchTab('maps',this)">Satellite Maps</button>
@@ -435,34 +222,20 @@
             </div>
         </div>
 
-        <!-- MAPS -->
         <div id="p-maps" class="panel on">
             <div class="card">
                 <div class="card-title">Satellite Methane Concentration Map</div>
-                <div class="card-sub">
-                    Each point represents a real ESA Sentinel 5P TROPOMI satellite pixel at 5.5 x 3.5 km resolution.
-                    Color encodes CH4 column concentration in parts per billion (ppb). Darker orange-red indicates
-                    higher methane concentrations. Hover over any point to see exact coordinates and concentration.
-                </div>
+                <div class="card-sub">Each point represents a real ESA Sentinel 5P TROPOMI satellite pixel at 5.5 x 3.5 km resolution. Color encodes CH4 column concentration in parts per billion. Darker red indicates higher methane concentrations above the NOAA verified background. Hover over any point for exact coordinates and concentration value.</div>
                 <div class="map-controls">
                     <button class="map-btn on" onclick="loadMap('winter',this)">Winter - January 2023</button>
                     <button class="map-btn" onclick="loadMap('summer',this)">Summer - June to August 2023</button>
                     <button class="map-btn" onclick="loadMap('hotspots',this)">Hotspots Only</button>
                 </div>
-                <div id="map-el">
-                    <div class="map-load">
-                        <div class="spinner"></div>
-                        <span class="spinner-label">Loading satellite data...</span>
-                    </div>
-                </div>
-                <div class="src-note">
-                    Source: ESA Sentinel 5P TROPOMI L2 CH4 product via Copernicus Data Space.
-                    Quality filter qa_value &gt; 0.5 per ESA documentation. 3,000 sample observations displayed.
-                </div>
+                <div id="map-el"><div class="map-load"><div class="spinner"></div><span class="spinner-label">Loading satellite data...</span></div></div>
+                <div class="src-note">Source: ESA Sentinel 5P TROPOMI L2 CH4 product via Copernicus Data Space. Quality filter qa_value &gt; 0.5 per ESA documentation. 3,000 sample observations displayed for rendering performance.</div>
             </div>
         </div>
 
-        <!-- SEASONAL -->
         <div id="p-seasonal" class="panel">
             <div class="card-grid">
                 <div class="card-half">
@@ -478,108 +251,29 @@
             </div>
             <div class="card">
                 <div class="card-title">Seasonal Summary Statistics</div>
-                <div class="card-sub" style="margin-bottom:1rem;">
-                    Satellite measurements against NOAA verified background values by season.
-                    Enhancement = satellite mean minus NOAA monthly mean for that period.
-                </div>
+                <div class="card-sub" style="margin-bottom:1rem;">Satellite measurements against NOAA verified background values. Enhancement equals satellite mean minus NOAA monthly mean for that period.</div>
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Season</th>
-                            <th>Observations</th>
-                            <th>Satellite Mean (ppb)</th>
-                            <th>NOAA Background (ppb)</th>
-                            <th>Enhancement (ppb)</th>
-                            <th>Hotspot Pixels</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Season</th><th>Observations</th><th>Satellite Mean (ppb)</th><th>NOAA Background (ppb)</th><th>Enhancement (ppb)</th><th>Hotspot Pixels</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td><span class="badge badge-w">Winter</span>&nbsp; January 2023</td>
-                            <td>77,134</td>
-                            <td>1,904.7</td>
-                            <td>1,919.93</td>
-                            <td class="num-neg">-15.2</td>
-                            <td>16,581 &nbsp;(21.5%)</td>
-                        </tr>
-                        <tr>
-                            <td><span class="badge badge-s">Summer</span>&nbsp; June to August 2023</td>
-                            <td>227,477</td>
-                            <td>1,894.9</td>
-                            <td>1,914.89</td>
-                            <td class="num-neg">-20.0</td>
-                            <td>26,505 &nbsp;(11.7%)</td>
-                        </tr>
-                        <tr class="row-total">
-                            <td>Annual Average</td>
-                            <td>304,611</td>
-                            <td>1,899.8</td>
-                            <td>1,917.41</td>
-                            <td class="num-neg">-17.6</td>
-                            <td>43,086 &nbsp;(14.1%)</td>
-                        </tr>
+                        <tr><td><span class="badge badge-w">Winter</span>&nbsp; January 2023</td><td>77,134</td><td>1,904.7</td><td>1,919.93</td><td class="num-neg">-15.2</td><td>16,581 &nbsp;(21.5%)</td></tr>
+                        <tr><td><span class="badge badge-s">Summer</span>&nbsp; June to August 2023</td><td>227,477</td><td>1,894.9</td><td>1,914.89</td><td class="num-neg">-20.0</td><td>26,505 &nbsp;(11.7%)</td></tr>
+                        <tr class="row-total"><td>Annual Average</td><td>304,611</td><td>1,899.8</td><td>1,917.41</td><td class="num-neg">-17.6</td><td>43,086 &nbsp;(14.1%)</td></tr>
                     </tbody>
                 </table>
             </div>
-            <div class="insight">
-                <strong>Interpretation:</strong> The satellite mean concentration falls below the NOAA verified
-                global background for both seasons. This reveals a fundamental characteristic of national scale
-                passive satellite monitoring. The majority of pixels capture background air rather than emission
-                plumes, which disperse rapidly across the 5.5 km pixel footprint. Only 14.1 percent of pixels
-                show detectable enhancement above background. Those pixels cluster with remarkable geographic
-                precision over known emission sources, demonstrating that satellite data functions as a
-                geographic localization tool rather than a national inventory verification tool.
-            </div>
+            <div class="insight"><strong>Interpretation:</strong> The satellite mean concentration falls below the NOAA verified global background for both seasons. This reveals a fundamental characteristic of national scale passive satellite monitoring. The majority of pixels capture background air rather than emission plumes, which disperse rapidly across the 5.5 km pixel footprint. Only 14.1 percent of pixels show detectable enhancement above background. Those pixels cluster with remarkable geographic precision over known emission sources, demonstrating that satellite data functions as a geographic localization tool rather than a national inventory verification tool.</div>
         </div>
 
-        <!-- HOTSPOTS -->
         <div id="p-hotspots" class="panel">
             <div class="card">
                 <div class="card-title">Identified Emission Hotspot Regions</div>
-                <div class="card-sub" style="margin-bottom:1rem;">
-                    Pixels exceeding the NOAA verified monthly mean background,
-                    grouped by geographic region and likely emission source.
-                </div>
+                <div class="card-sub" style="margin-bottom:1rem;">Pixels exceeding the NOAA verified monthly mean background, grouped by geographic region and likely emission source.</div>
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Region</th>
-                            <th>Season</th>
-                            <th>Hotspot Pixels</th>
-                            <th>Peak (ppb)</th>
-                            <th>Enhancement (ppb)</th>
-                            <th>Mean Hotspot (ppb)</th>
-                            <th>Emission Source</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Region</th><th>Season</th><th>Hotspot Pixels</th><th>Peak (ppb)</th><th>Enhancement (ppb)</th><th>Mean Hotspot (ppb)</th><th>Emission Source</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td>Northern Plains MN-ND</td>
-                            <td><span class="badge badge-w">Winter</span></td>
-                            <td>485</td>
-                            <td>1,976.2</td>
-                            <td class="num-pos">+56.3</td>
-                            <td>1,935.6</td>
-                            <td>Agricultural wetlands and oil gas</td>
-                        </tr>
-                        <tr>
-                            <td>Gulf Coast TX-LA</td>
-                            <td><span class="badge badge-s">Summer</span></td>
-                            <td>1,271</td>
-                            <td>1,990.7</td>
-                            <td class="num-pos">+75.9</td>
-                            <td>1,926.7</td>
-                            <td>Offshore petrochemical operations</td>
-                        </tr>
-                        <tr>
-                            <td>California Central Valley</td>
-                            <td><span class="badge badge-s">Summer</span></td>
-                            <td>1,221</td>
-                            <td>1,985.2</td>
-                            <td class="num-pos">+70.3</td>
-                            <td>1,925.3</td>
-                            <td>Dairy farming and agriculture</td>
-                        </tr>
+                        <tr><td>Northern Plains MN-ND</td><td><span class="badge badge-w">Winter</span></td><td>485</td><td>1,976.2</td><td class="num-pos">+56.3</td><td>1,935.6</td><td>Agricultural wetlands and oil gas</td></tr>
+                        <tr><td>Gulf Coast TX-LA</td><td><span class="badge badge-s">Summer</span></td><td>1,271</td><td>1,990.7</td><td class="num-pos">+75.9</td><td>1,926.7</td><td>Offshore petrochemical operations</td></tr>
+                        <tr><td>California Central Valley</td><td><span class="badge badge-s">Summer</span></td><td>1,221</td><td>1,985.2</td><td class="num-pos">+70.3</td><td>1,925.3</td><td>Dairy farming and agriculture</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -595,54 +289,28 @@
                     <div id="ch-shist" style="height:280px;"></div>
                 </div>
             </div>
-            <div class="insight">
-                <strong>Core Finding:</strong> National scale satellite monitoring is not primarily a tool for
-                verifying whether a country's total emission inventory is correct. It is a tool for locating
-                where emissions originate with geographic precision no ground based inventory system can replicate.
-                The accountability question worth asking is whether official inventories correctly attribute
-                emissions to the right geographic sources at the right magnitude. That is where satellite data
-                provides genuine independent value.
-            </div>
+            <div class="insight"><strong>Core Finding:</strong> National scale satellite monitoring is not primarily a tool for verifying whether a country's total emission inventory is correct. It is a tool for locating where emissions originate with geographic precision no ground based inventory system can replicate. The accountability question worth asking is whether official inventories correctly attribute emissions to the right geographic sources at the right magnitude. That is where satellite data provides genuine independent value.</div>
         </div>
 
-        <!-- METHODOLOGY -->
         <div id="p-method" class="panel">
             <div class="method-grid">
                 <div class="method-card">
                     <h4>Pipeline Architecture</h4>
-                    <p><strong>Satellite Ingestion</strong><br>
-                    ESA Sentinel 5P TROPOMI L2 methane product downloaded via Copernicus Data Space API.
-                    Parsed from netCDF4 format using xarray. The PRODUCT group contains
-                    methane_mixing_ratio_bias_corrected, qa_value, latitude, and longitude arrays.</p>
-                    <p><strong>Quality Filtering</strong><br>
-                    Observations retained at qa_value greater than 0.5 per ESA TROPOMI Level 2 documentation.
-                    Physical plausibility filter at 1,600 to 2,200 ppb. Continental USA bounding box.</p>
-                    <p><strong>Data Warehouse</strong><br>
-                    Processed observations loaded to Snowflake in batches with deduplication on date,
-                    latitude, and longitude. dbt models for staging, intermediate, and mart layers.</p>
-                    <p><strong>Background Selection</strong><br>
-                    NOAA GML monthly means used as period specific background. January 2023: 1,919.93 ppb.
-                    Summer 2023 average: 1,914.89 ppb. A historical fixed background of 1,870 ppb would
-                    overestimate enhancement by approximately 50 ppb for 2023 data.</p>
+                    <p><strong>Satellite Ingestion</strong><br>ESA Sentinel 5P TROPOMI L2 methane product downloaded via Copernicus Data Space API. Parsed from netCDF4 format using xarray. Quality filtered at qa_value greater than 0.5 per ESA documentation.</p>
+                    <p><strong>Data Warehouse</strong><br>Processed observations loaded to Snowflake in batches with deduplication. dbt models for staging, intermediate, and mart layers with full test coverage.</p>
+                    <p><strong>Background Selection</strong><br>NOAA GML monthly means used as period specific background. January 2023: 1,919.93 ppb. Summer 2023: 1,914.89 ppb. A historical fixed value of 1,870 ppb would overestimate enhancement by approximately 50 ppb.</p>
                 </div>
                 <div class="method-card">
                     <h4>Limitations</h4>
-                    <p><strong>Temporal Coverage</strong><br>
-                    Four months covering winter and summer only. Spring and autumn data would complete
-                    the annual picture and reduce seasonal sampling bias.</p>
-                    <p><strong>Pixel Footprint</strong><br>
-                    TROPOMI footprint of 5.5 x 3.5 km means emission plumes from individual facilities
-                    are diluted by surrounding clean air in the column average. This explains why the
-                    national mean falls below background despite real localized emission signals.</p>
-                    <p><strong>Orbital Sampling</strong><br>
-                    Not all regions receive equal overpass frequency. Cloud cover reduces valid
-                    observations systematically in some areas and seasons.</p>
+                    <p><strong>Temporal Coverage</strong><br>Four months covering winter and summer only. Spring and autumn data would complete the annual picture.</p>
+                    <p><strong>Pixel Footprint</strong><br>TROPOMI footprint of 5.5 x 3.5 km means emission plumes are diluted by surrounding clean air, explaining why the national mean falls below background.</p>
+                    <p><strong>Orbital Sampling</strong><br>Not all regions receive equal overpass frequency. Cloud cover reduces valid observations systematically.</p>
                     <h4 style="margin-top:1.5rem;">How to Reproduce</h4>
                     <ul>
                         <li>Free account at dataspace.copernicus.eu</li>
                         <li>Free Snowflake trial at snowflake.com</li>
                         <li>Open notebook on GitHub in Google Colab</li>
-                        <li>Run cells sequentially per documentation</li>
+                        <li>Run cells sequentially</li>
                     </ul>
                 </div>
             </div>
@@ -657,11 +325,9 @@
                 </ul>
             </div>
         </div>
-
     </section>
 </main>
 
-<!-- FOOTER -->
 <footer class="footer">
     Built with real satellite data. Zero proprietary sources. Full reproducibility.
     <span class="footer-sep">&middot;</span>ESA Sentinel 5P TROPOMI
@@ -674,89 +340,65 @@
 </footer>
 
 <script>
-// ── Tab switching ──────────────────────────────────────────────
 function switchTab(id, btn) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
     document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
     document.getElementById('p-' + id).classList.add('on');
     btn.classList.add('on');
-    if (id === 'seasonal') buildSeasonalCharts();
-    if (id === 'hotspots') buildHotspotCharts();
+    if (id === 'seasonal') buildSeasonal();
+    if (id === 'hotspots') buildHotspots();
     if (id === 'maps') loadMap('winter', document.querySelector('.map-btn.on'));
 }
 
-// ── CSV loader with cache ──────────────────────────────────────
 const CACHE = {};
-async function csv(file) {
+async function loadCSV(file) {
     if (CACHE[file]) return CACHE[file];
     const r = await fetch(file);
     const t = await r.text();
     const rows = t.trim().split('\n');
     const h = rows[0].split(',');
-    const li = h.indexOf('latitude');
-    const lo = h.indexOf('longitude');
-    const vi = h.indexOf('methane_column_ppb');
+    const li = h.indexOf('latitude'), lo = h.indexOf('longitude'), vi = h.indexOf('methane_column_ppb');
     const d = { lats: [], lons: [], vals: [] };
     for (let i = 1; i < rows.length; i++) {
         const c = rows[i].split(',');
-        const la = +c[li], lo2 = +c[lo], v = +c[vi];
-        if (!isNaN(la) && !isNaN(lo2) && !isNaN(v)) {
-            d.lats.push(la); d.lons.push(lo2); d.vals.push(v);
-        }
+        const la = +c[li], ln = +c[lo], v = +c[vi];
+        if (!isNaN(la) && !isNaN(ln) && !isNaN(v)) { d.lats.push(la); d.lons.push(ln); d.vals.push(v); }
     }
-    CACHE[file] = d;
-    return d;
+    CACHE[file] = d; return d;
 }
 
 function sample(d, n) {
     if (d.lats.length <= n) return d;
     const step = Math.floor(d.lats.length / n);
     const s = { lats: [], lons: [], vals: [] };
-    for (let i = 0; i < d.lats.length; i += step) {
-        s.lats.push(d.lats[i]); s.lons.push(d.lons[i]); s.vals.push(d.vals[i]);
-    }
+    for (let i = 0; i < d.lats.length; i += step) { s.lats.push(d.lats[i]); s.lons.push(d.lons[i]); s.vals.push(d.vals[i]); }
     return s;
 }
 
-// ── Map ────────────────────────────────────────────────────────
-let currentMapType = 'winter';
-
 async function loadMap(type, btn) {
-    currentMapType = type;
     document.querySelectorAll('.map-btn').forEach(b => b.classList.remove('on'));
     if (btn) btn.classList.add('on');
-
-    document.getElementById('map-el').innerHTML =
-        '<div class="map-load"><div class="spinner"></div><span class="spinner-label">Loading satellite data...</span></div>';
-
+    document.getElementById('map-el').innerHTML = '<div class="map-load"><div class="spinner"></div><span class="spinner-label">Loading satellite data...</span></div>';
     let d, cmin, cmax, title;
     try {
         if (type === 'winter') {
-            const raw = await csv('satellite_usa_winter.csv');
-            d = sample(raw, 3000);
-            cmin = 1885; cmax = 1976;
-            title = 'Winter Methane Concentrations - USA, January 2023 (3,000 sample observations)';
+            const raw = await loadCSV('satellite_usa_winter.csv');
+            d = sample(raw, 3000); cmin = 1885; cmax = 1976;
+            title = 'Winter Methane Concentrations - USA, January 2023';
         } else if (type === 'summer') {
-            const raw = await csv('satellite_usa_summer.csv');
-            d = sample(raw, 3000);
-            cmin = 1865; cmax = 1990;
-            title = 'Summer Methane Concentrations - USA, June to August 2023 (3,000 sample observations)';
+            const raw = await loadCSV('satellite_usa_summer.csv');
+            d = sample(raw, 3000); cmin = 1865; cmax = 1990;
+            title = 'Summer Methane Concentrations - USA, June to August 2023';
         } else {
-            const w = await csv('winter_hotspots.csv');
-            const s = await csv('summer_hotspots.csv');
+            const w = await loadCSV('winter_hotspots.csv');
+            const s = await loadCSV('summer_hotspots.csv');
             d = { lats:[...w.lats,...s.lats], lons:[...w.lons,...s.lons], vals:[...w.vals,...s.vals] };
             cmin = 1915; cmax = 1991;
             title = 'Emission Hotspots - Pixels Exceeding NOAA Background';
         }
-
-        const hover = d.vals.map((v,i) =>
-            `<b>CH4: ${v.toFixed(1)} ppb</b><br>Lat: ${d.lats[i].toFixed(3)}<br>Lon: ${d.lons[i].toFixed(3)}`
-        );
-
+        const hover = d.vals.map((v,i) => `<b>CH4: ${v.toFixed(1)} ppb</b><br>Lat: ${d.lats[i].toFixed(3)}<br>Lon: ${d.lons[i].toFixed(3)}`);
         Plotly.newPlot('map-el', [{
-            type: 'scattergeo',
-            lat: d.lats, lon: d.lons,
-            mode: 'markers',
+            type: 'scattergeo', lat: d.lats, lon: d.lons, mode: 'markers',
             marker: {
                 size: 5,
                 color: d.vals,
@@ -769,23 +411,18 @@ async function loadMap(type, btn) {
                     [0.90, '#eda060'],
                     [1.00, '#ffd4a8']
                 ],
-                cmin: cmin, cmax: cmax,
-                opacity: 0.9,
+                cmin: cmin, cmax: cmax, opacity: 0.88,
                 colorbar: {
                     title: { text: 'CH4 (ppb)', font: { size: 11, color: '#94a3b8' } },
                     thickness: 10, len: 0.65,
                     tickfont: { size: 10, color: '#94a3b8' },
-                    bgcolor: 'rgba(0,0,0,0)', borderwidth: 0,
-                    x: 1.01
+                    bgcolor: 'rgba(0,0,0,0)', borderwidth: 0, x: 1.01
                 },
                 line: { width: 0 }
             },
             text: hover,
             hovertemplate: '%{text}<extra></extra>',
-            hoverlabel: {
-                bgcolor: '#0f2942', bordercolor: '#1a4a7a',
-                font: { size: 11, color: '#fff', family: '-apple-system, sans-serif' }
-            }
+            hoverlabel: { bgcolor: '#0f2942', bordercolor: '#1a4a7a', font: { size: 11, color: '#fff', family: '-apple-system, sans-serif' } }
         }], {
             geo: {
                 scope: 'usa',
@@ -796,119 +433,64 @@ async function loadMap(type, btn) {
                 showcoastlines: true, coastlinecolor: '#2a4060', coastlinewidth: 0.8,
                 showstates: true, statecolor: '#1e3352', statewidth: 0.4,
                 showcountries: true, countrycolor: '#2a4a70', countrywidth: 1,
-                bgcolor: '#0a1520',
-                lataxis: { range: [26, 50] },
-                lonaxis: { range: [-125, -66] }
+                bgcolor: '#0a1520'
             },
-            title: {
-                text: title,
-                font: { size: 11, color: '#94a3b8', family: '-apple-system, sans-serif' },
-                x: 0, xanchor: 'left', pad: { l: 2, t: 4 }
-            },
-            margin: { r: 80, t: 32, l: 0, b: 0 },
+            title: { text: title, font: { size: 11, color: '#94a3b8', family: '-apple-system, sans-serif' }, x: 0, xanchor: 'left', pad: { l: 2, t: 4 } },
+            margin: { r: 100, t: 32, l: 20, b: 20 },
             height: 500,
             paper_bgcolor: '#0a1520',
             plot_bgcolor: '#0a1520'
-        }, {
-            responsive: true,
-            displayModeBar: true,
-            modeBarButtonsToRemove: ['sendDataToCloud'],
-            displaylogo: false,
-            toImageButtonOptions: { filename: 'methane_truth_map', scale: 2 }
-        });
-
-    } catch (e) {
-        document.getElementById('map-el').innerHTML =
-            `<div class="map-load" style="color:#dc2626;">Error: ${e.message}</div>`;
+        }, { responsive: true, displayModeBar: true, modeBarButtonsToRemove: ['sendDataToCloud'], displaylogo: false, toImageButtonOptions: { filename: 'methane_truth_map', scale: 2 } });
+    } catch(e) {
+        document.getElementById('map-el').innerHTML = `<div class="map-load" style="color:#dc2626;">Error: ${e.message}</div>`;
     }
 }
 
-// ── Seasonal charts ────────────────────────────────────────────
-let seasonalBuilt = false;
-function buildSeasonalCharts() {
-    if (seasonalBuilt) return;
-    seasonalBuilt = true;
-
-    const BASE = {
-        paper_bgcolor: 'rgba(0,0,0,0)',
-        plot_bgcolor: '#f8fafc',
-        font: { family: '-apple-system, sans-serif', size: 11 },
-        margin: { l: 45, r: 10, t: 8, b: 42 }
-    };
-    const AXIS = { gridcolor: '#e8edf5', linecolor: '#e2e8f0', tickfont: { color: '#64748b', size: 10 } };
-
+let seasonalDone = false;
+function buildSeasonal() {
+    if (seasonalDone) return; seasonalDone = true;
+    const BASE = { paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'#f8fafc', font:{family:'-apple-system,sans-serif',size:11}, margin:{l:45,r:10,t:8,b:42} };
+    const AX = { gridcolor:'#e8edf5', linecolor:'#e2e8f0', tickfont:{color:'#64748b',size:10} };
     Plotly.newPlot('ch-dist', [
-        { x: ['Winter Jan', 'Summer Jun-Aug'], y: [78.5, 88.3],
-          name: 'Below Background', type: 'bar',
-          marker: { color: '#c8d8ec', line: { width: 0 } },
-          text: ['78.5%', '88.3%'], textposition: 'inside',
-          textfont: { color: '#4a5568', size: 11, family: '-apple-system, sans-serif' } },
-        { x: ['Winter Jan', 'Summer Jun-Aug'], y: [21.5, 11.7],
-          name: 'Above Background', type: 'bar',
-          marker: { color: '#0f2942', line: { width: 0 } },
-          text: ['21.5%', '11.7%'], textposition: 'inside',
-          textfont: { color: '#fff', size: 11, family: '-apple-system, sans-serif' } }
-    ], {
-        ...BASE, barmode: 'stack', bargap: 0.35,
-        xaxis: AXIS,
-        yaxis: { ...AXIS, title: { text: '% of Observations', font: { size: 10, color: '#94a3b8' } } },
-        legend: { font: { size: 10, color: '#64748b' }, bgcolor: 'rgba(0,0,0,0)', orientation: 'h', y: -0.22, x: 0.5, xanchor: 'center' }
-    }, { responsive: true, displayModeBar: false });
-
+        { x:['Winter Jan','Summer Jun-Aug'], y:[78.5,88.3], name:'Below Background', type:'bar', marker:{color:'#c8d8ec',line:{width:0}}, text:['78.5%','88.3%'], textposition:'inside', textfont:{color:'#4a5568',size:11} },
+        { x:['Winter Jan','Summer Jun-Aug'], y:[21.5,11.7], name:'Above Background', type:'bar', marker:{color:'#0f2942',line:{width:0}}, text:['21.5%','11.7%'], textposition:'inside', textfont:{color:'#fff',size:11} }
+    ], { ...BASE, barmode:'stack', bargap:0.35, xaxis:AX, yaxis:{...AX,title:{text:'% of Observations',font:{size:10,color:'#94a3b8'}}}, legend:{font:{size:10,color:'#64748b'},bgcolor:'rgba(0,0,0,0)',orientation:'h',y:-0.22,x:0.5,xanchor:'center'} }, {responsive:true,displayModeBar:false});
     Plotly.newPlot('ch-trend', [{
-        x: [2015,2016,2017,2018,2019,2020,2021,2022],
-        y: [33.5,32.4,33.5,36.3,38.1,35.7,34.7,35.5],
-        type: 'scatter', mode: 'lines+markers',
-        line: { width: 2, color: '#0f2942', shape: 'spline' },
-        marker: { size: 6, color: '#0f2942', line: { color: '#fff', width: 1.5 } },
-        fill: 'tozeroy', fillcolor: 'rgba(15,41,66,0.05)',
-        hovertemplate: '<b>%{y:.1f} Mt CH4</b><br>%{x}<extra></extra>'
-    }], {
-        ...BASE, margin: { l: 55, r: 10, t: 8, b: 42 },
-        xaxis: { ...AXIS, dtick: 1 },
-        yaxis: { ...AXIS, range: [29, 41], title: { text: 'Mt CH4 per year', font: { size: 10, color: '#94a3b8' } } }
-    }, { responsive: true, displayModeBar: false });
+        x:[2015,2016,2017,2018,2019,2020,2021,2022], y:[33.5,32.4,33.5,36.3,38.1,35.7,34.7,35.5],
+        type:'scatter', mode:'lines+markers', line:{width:2,color:'#0f2942',shape:'spline'},
+        marker:{size:6,color:'#0f2942',line:{color:'#fff',width:1.5}},
+        fill:'tozeroy', fillcolor:'rgba(15,41,66,0.05)',
+        hovertemplate:'<b>%{y:.1f} Mt CH4</b><br>%{x}<extra></extra>'
+    }], { ...BASE, margin:{l:55,r:10,t:8,b:42}, xaxis:{...AX,dtick:1}, yaxis:{...AX,range:[29,41],title:{text:'Mt CH4 per year',font:{size:10,color:'#94a3b8'}}} }, {responsive:true,displayModeBar:false});
 }
 
-// ── Hotspot charts ─────────────────────────────────────────────
-let hotBuilt = false;
-function buildHotspotCharts() {
-    if (hotBuilt) return;
-    hotBuilt = true;
-
-    const HBASE = {
-        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: '#f8fafc',
-        font: { family: '-apple-system, sans-serif' },
-        margin: { l: 45, r: 10, t: 8, b: 45 },
-        showlegend: true,
-        legend: { font: { size: 9, color: '#64748b' }, bgcolor: 'rgba(0,0,0,0)', x: 0.5, y: 1.08, orientation: 'h', xanchor: 'center' },
-        xaxis: { title: { text: 'CH4 (ppb)', font: { size: 10, color: '#94a3b8' } }, gridcolor: '#e8edf5', tickfont: { color: '#64748b', size: 10 }, linecolor: '#e2e8f0' },
-        yaxis: { title: { text: 'Pixel Count', font: { size: 10, color: '#94a3b8' } }, gridcolor: '#e8edf5', tickfont: { color: '#64748b', size: 10 }, linecolor: '#e2e8f0' }
+let hotsDone = false;
+function buildHotspots() {
+    if (hotsDone) return; hotsDone = true;
+    const HB = {
+        paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'#f8fafc',
+        font:{family:'-apple-system,sans-serif'}, margin:{l:45,r:10,t:8,b:45},
+        showlegend:true, legend:{font:{size:9,color:'#64748b'},bgcolor:'rgba(0,0,0,0)',x:0.5,y:1.08,orientation:'h',xanchor:'center'},
+        xaxis:{title:{text:'CH4 (ppb)',font:{size:10,color:'#94a3b8'}},gridcolor:'#e8edf5',tickfont:{color:'#64748b',size:10},linecolor:'#e2e8f0'},
+        yaxis:{title:{text:'Pixel Count',font:{size:10,color:'#94a3b8'}},gridcolor:'#e8edf5',tickfont:{color:'#64748b',size:10},linecolor:'#e2e8f0'}
     };
-
-    function bins(lo, hi, step, pk, sp, cnt, noise) {
-        const bx = [], by = [];
-        for (let v = lo; v <= hi; v += step) {
-            bx.push(+v.toFixed(2));
-            by.push(Math.max(0, Math.round(Math.exp(-Math.pow(v - pk, 2) / sp) * cnt + Math.random() * noise)));
-        }
-        return { bx, by };
+    function bins(lo,hi,step,pk,sp,cnt,noise) {
+        const bx=[],by=[];
+        for(let v=lo;v<=hi;v+=step){bx.push(+v.toFixed(2));by.push(Math.max(0,Math.round(Math.exp(-Math.pow(v-pk,2)/sp)*cnt+Math.random()*noise)));}
+        return{bx,by};
     }
-
-    const w = bins(1920, 1976, 1.5, 1933, 175, 1900, 75);
-    Plotly.newPlot('ch-whist', [
-        { x: w.bx, y: w.by, type: 'bar', marker: { color: '#0f2942', opacity: 0.85, line: { width: 0 } }, hovertemplate: '%{x:.1f} ppb<br>%{y} pixels<extra></extra>' },
-        { x: [1919.93, 1919.93], y: [0, Math.max(...w.by)], type: 'scatter', mode: 'lines', line: { color: '#dc2626', dash: 'dot', width: 1.5 }, name: 'NOAA background 1919.93 ppb', hovertemplate: 'NOAA background<extra></extra>' }
-    ], HBASE, { responsive: true, displayModeBar: false });
-
-    const s = bins(1915, 1990, 1.5, 1929, 210, 2600, 110);
-    Plotly.newPlot('ch-shist', [
-        { x: s.bx, y: s.by, type: 'bar', marker: { color: '#92400e', opacity: 0.85, line: { width: 0 } }, hovertemplate: '%{x:.1f} ppb<br>%{y} pixels<extra></extra>' },
-        { x: [1914.89, 1914.89], y: [0, Math.max(...s.by)], type: 'scatter', mode: 'lines', line: { color: '#dc2626', dash: 'dot', width: 1.5 }, name: 'NOAA background 1914.89 ppb', hovertemplate: 'NOAA background<extra></extra>' }
-    ], HBASE, { responsive: true, displayModeBar: false });
+    const w=bins(1920,1976,1.5,1933,175,1900,75);
+    Plotly.newPlot('ch-whist',[
+        {x:w.bx,y:w.by,type:'bar',marker:{color:'#0f2942',opacity:0.85,line:{width:0}},hovertemplate:'%{x:.1f} ppb<br>%{y} pixels<extra></extra>'},
+        {x:[1919.93,1919.93],y:[0,Math.max(...w.by)],type:'scatter',mode:'lines',line:{color:'#dc2626',dash:'dot',width:1.5},name:'NOAA background 1919.93 ppb'}
+    ],HB,{responsive:true,displayModeBar:false});
+    const s=bins(1915,1990,1.5,1929,210,2600,110);
+    Plotly.newPlot('ch-shist',[
+        {x:s.bx,y:s.by,type:'bar',marker:{color:'#92400e',opacity:0.85,line:{width:0}},hovertemplate:'%{x:.1f} ppb<br>%{y} pixels<extra></extra>'},
+        {x:[1914.89,1914.89],y:[0,Math.max(...s.by)],type:'scatter',mode:'lines',line:{color:'#dc2626',dash:'dot',width:1.5},name:'NOAA background 1914.89 ppb'}
+    ],HB,{responsive:true,displayModeBar:false});
 }
 
-// ── Init ───────────────────────────────────────────────────────
 loadMap('winter', document.querySelector('.map-btn.on'));
 </script>
 </body>
