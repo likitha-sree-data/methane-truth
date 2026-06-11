@@ -22,21 +22,14 @@ st.markdown("""
 
 .stApp { background-color: #f5f4f0; }
 
-.block-container {
-    max-width: 1200px !important;
-    padding-left: 4rem !important;
-    padding-right: 4rem !important;
-    padding-top: 1rem !important;
-}
-
 section[data-testid="stSidebar"] { display: none; }
 [data-testid="collapsedControl"] { display: none; }
 
-/* Kill the reserved sidebar gap and use full width */
 .block-container {
     max-width: 100% !important;
     padding-left: 4rem !important;
     padding-right: 4rem !important;
+    padding-top: 1rem !important;
 }
 
 /* ── Hero headline block ── */
