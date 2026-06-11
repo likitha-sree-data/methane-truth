@@ -760,15 +760,14 @@ with tab3:
         texttemplate="%{text:.1f}%", textposition="inside",
         textfont=dict(family="IBM Plex Mono", color=WHITE, size=13),
     )
-    fig_dist.update_layout(
-        **base_layout("Pixel Distribution Relative to NOAA Background", height=320),
-        legend=dict(
-            orientation="h", yanchor="bottom", y=1.02,
-            xanchor="left", x=0,
-            bgcolor=WHITE, bordercolor=BORDER, borderwidth=1,
-            font=dict(family="Inter", color=GRAY, size=12),
-        ),
+    layout_dist = base_layout("Pixel Distribution Relative to NOAA Background", height=320)
+    layout_dist["legend"] = dict(
+        orientation="h", yanchor="bottom", y=1.02,
+        xanchor="left", x=0,
+        bgcolor=WHITE, bordercolor=BORDER, borderwidth=1,
+        font=dict(family="Inter", color=GRAY, size=12),
     )
+    fig_dist.update_layout(**layout_dist)
     st.plotly_chart(fig_dist, use_container_width=True)
 
     enh = pd.DataFrame({
