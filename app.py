@@ -367,6 +367,11 @@ n_hs_s    = len(summer_hs) if summer_hs is not None else 24_562
 total_hs  = n_hs_w + n_hs_s
 total_obs = n_winter + n_summer
 
+# Headline KPI uses the verified pipeline total from the handoff document.
+# The CSVs are land-masked subsets; the full 304,611 includes all quality-filtered
+# pixels before the land mask step. This is the correct number to display.
+DISPLAY_TOTAL = 304_611
+
 
 # ── SIDEBAR ───────────────────────────────────────────────────────────────────
 
@@ -410,11 +415,11 @@ st.markdown('<div class="kpi-label">Key Figures</div>', unsafe_allow_html=True)
 
 c1, c2, c3, c4, c5 = st.columns(5)
 kpis = [
-    ("Satellite observations",      f"{total_obs:,}",  "Quality-filtered, land only",           False),
-    ("Pixels above background",     f"{total_hs:,}",   "Exceeding NOAA monthly mean",           False),
-    ("Detection rate",              "14.1%",            "Pixels showing CH4 elevation",          True),
-    ("Peak enhancement",            "+75.9 ppb",        "Gulf Coast, single pixel maximum",      True),
-    ("Official 2022 inventory",     "35.5 Mt CH4",      "USA UNFCCC submission",                 False),
+    ("Satellite observations",      f"{DISPLAY_TOTAL:,}",  "Quality-filtered, pre-land-mask",       False),
+    ("Pixels above background",     f"{total_hs:,}",       "Exceeding NOAA monthly mean",           False),
+    ("Detection rate",              "14.1%",               "Pixels showing CH4 elevation",          True),
+    ("Peak enhancement",            "+75.9 ppb",           "Gulf Coast, single pixel maximum",      True),
+    ("Official 2022 inventory",     "35.5 Mt CH4",         "USA UNFCCC submission",                 False),
 ]
 for col, (label, val, sub, hi) in zip([c1,c2,c3,c4,c5], kpis):
     with col:
@@ -511,16 +516,36 @@ with tab1:
     if "Hotspot" in map_choice:
         if winter_hs is not None and summer_hs is not None:
             plot_df = pd.concat([winter_hs, summer_hs], ignore_index=True)
+            # Color by enhancement above background so clusters pop visually
+            bg_map = {True: BG_WINTER, False: BG_SUMMER}
+            # winter_hs rows have higher ppb on average; tag them
+            plot_df["_is_winter"] = plot_df.index < len(winter_hs)
+            plot_df["enhancement"] = plot_df.apply(
+                lambda r: r["methane_column_ppb"] - (BG_WINTER if r["_is_winter"] else BG_SUMMER),
+                axis=1
+            ).clip(lower=0)
         else:
             rng  = np.random.default_rng(42)
-            lats = np.concatenate([rng.normal(47.5,1.2,485), rng.normal(29.0,0.8,1271), rng.normal(36.5,1.0,1221)])
-            lons = np.concatenate([rng.normal(-97.5,1.5,485), rng.normal(-91.5,1.2,1271), rng.normal(-120.0,0.8,1221)])
-            ppbs = np.concatenate([rng.uniform(1920,1976,485), rng.uniform(1915,1991,1271), rng.uniform(1915,1985,1221)])
-            plot_df = pd.DataFrame({"latitude":lats,"longitude":lons,"methane_column_ppb":ppbs})
-        cmin, cmax = 1915, 1992
-        map_title  = "Emission Hotspots: Pixels Exceeding NOAA Verified Background"
-        caption    = "All above-background pixels, winter and summer combined. No sampling applied."
-        dot_sz     = 3
+            lats = np.concatenate([rng.normal(47.5,0.8,485), rng.normal(29.2,0.6,1271), rng.normal(36.8,0.7,1221)])
+            lons = np.concatenate([rng.normal(-97.5,1.0,485), rng.normal(-91.5,0.9,1271), rng.normal(-120.2,0.6,1221)])
+            ppbs = np.concatenate([rng.uniform(1920,1976,485), rng.uniform(1920,1991,1271), rng.uniform(1918,1985,1221)])
+            enh  = np.concatenate([ppbs[:485]-BG_WINTER, ppbs[485:485+1271]-BG_SUMMER, ppbs[485+1271:]-BG_SUMMER])
+            plot_df = pd.DataFrame({"latitude":lats,"longitude":lons,"methane_column_ppb":ppbs,"enhancement":enh.clip(0)})
+        color_col = "enhancement"
+        cmin, cmax = 0, 76
+        map_title  = "Emission Hotspots: Enhancement Above NOAA Verified Background (ppb)"
+        caption    = "All above-background pixels, winter and summer combined. Color = ppb above monthly NOAA background. No sampling."
+        dot_sz     = 4
+        hover_tmpl = "+%{customdata:.1f} ppb above background<br>%{lat:.3f}N %{lon:.3f}W<extra></extra>"
+        hover_data = plot_df["enhancement"]
+        # Colorscale: white (near zero) to dark green (high enhancement) - makes clusters obvious
+        map_colorscale = [
+            [0.0,  "#f0f4f2"],
+            [0.2,  "#a8d4be"],
+            [0.5,  "#3a9a64"],
+            [0.8,  "#1a6a3a"],
+            [1.0,  "#0a2818"],
+        ]
     elif "Winter" in map_choice:
         src = winter_df if winter_df is not None else pd.DataFrame({
             "latitude": np.random.uniform(30,49,5000),
@@ -528,10 +553,14 @@ with tab1:
             "methane_column_ppb": np.random.normal(1904,12,5000),
         })
         plot_df   = src.sample(min(5000,len(src)), random_state=42)
+        color_col = "methane_column_ppb"
         cmin, cmax = 1875, 1980
         map_title  = "Winter Methane Concentrations: USA, January 2023"
         caption    = f"NOAA verified background: {BG_WINTER} ppb, January 2023"
         dot_sz     = 2
+        map_colorscale = TEAL_SCALE
+        hover_tmpl = "%{customdata:.1f} ppb<br>%{lat:.3f}N %{lon:.3f}W<extra></extra>"
+        hover_data = plot_df["methane_column_ppb"]
     else:
         src = summer_df if summer_df is not None else pd.DataFrame({
             "latitude": np.random.uniform(30,49,5000),
@@ -539,10 +568,14 @@ with tab1:
             "methane_column_ppb": np.random.normal(1895,15,5000),
         })
         plot_df   = src.sample(min(5000,len(src)), random_state=42)
+        color_col = "methane_column_ppb"
         cmin, cmax = 1870, 1992
         map_title  = "Summer Methane Concentrations: USA, June to August 2023"
         caption    = f"NOAA verified background: {BG_SUMMER} ppb, summer 2023 average"
         dot_sz     = 2
+        map_colorscale = TEAL_SCALE
+        hover_tmpl = "%{customdata:.1f} ppb<br>%{lat:.3f}N %{lon:.3f}W<extra></extra>"
+        hover_data = plot_df["methane_column_ppb"]
 
     fig_map = go.Figure()
     fig_map.add_trace(go.Scattergeo(
@@ -550,21 +583,21 @@ with tab1:
         lon=plot_df["longitude"],
         mode="markers",
         marker=dict(
-            color=plot_df["methane_column_ppb"],
-            colorscale=TEAL_SCALE,
+            color=plot_df[color_col],
+            colorscale=map_colorscale,
             cmin=cmin, cmax=cmax,
             size=dot_sz,
             opacity=0.9,
             colorbar=dict(
-                title=dict(text="CH4 (ppb)",
+                title=dict(text="ppb above bg" if "enhancement" in color_col else "CH4 (ppb)",
                            font=dict(family="IBM Plex Mono", color=GRAY, size=10)),
                 tickfont=dict(family="IBM Plex Mono", color="#aaaaaa", size=9),
                 thickness=10, len=0.6,
                 bgcolor=WHITE, bordercolor=BORDER, x=1.01,
             ),
         ),
-        hovertemplate="%{customdata:.1f} ppb<br>%{lat:.3f}N %{lon:.3f}W<extra></extra>",
-        customdata=plot_df["methane_column_ppb"],
+        hovertemplate=hover_tmpl,
+        customdata=hover_data,
     ))
     for pin in [
         dict(lat=47.5, lon=-97.5, label="Northern Plains"),
@@ -710,53 +743,57 @@ with tab2:
 with tab3:
     st.markdown('<div class="sec-lbl">Seasonal Analysis</div>', unsafe_allow_html=True)
 
-    sa1, sa2 = st.columns(2)
+    # Two charts full width stacked - prevents the legend squeezing issue
+    dist = pd.DataFrame({
+        "Season":   ["Winter","Winter","Summer","Summer"],
+        "Category": ["Below background","Above background",
+                     "Below background","Above background"],
+        "Pct":      [78.5, 21.5, 88.3, 11.7],
+    })
+    fig_dist = px.bar(
+        dist, x="Season", y="Pct", color="Category",
+        color_discrete_map={"Below background":"#dde4e0","Above background":GREEN},
+        labels={"Pct":"Percent of observations"},
+        text="Pct", height=320, barmode="stack",
+    )
+    fig_dist.update_traces(
+        texttemplate="%{text:.1f}%", textposition="inside",
+        textfont=dict(family="IBM Plex Mono", color=WHITE, size=13),
+    )
+    fig_dist.update_layout(
+        **base_layout("Pixel Distribution Relative to NOAA Background", height=320),
+        legend=dict(
+            orientation="h", yanchor="bottom", y=1.02,
+            xanchor="left", x=0,
+            bgcolor=WHITE, bordercolor=BORDER, borderwidth=1,
+            font=dict(family="Inter", color=GRAY, size=12),
+        ),
+    )
+    st.plotly_chart(fig_dist, use_container_width=True)
 
-    with sa1:
-        dist = pd.DataFrame({
-            "Season":   ["Winter","Winter","Summer","Summer"],
-            "Category": ["Below background","Above background",
-                         "Below background","Above background"],
-            "Pct":      [78.5, 21.5, 88.3, 11.7],
-        })
-        fig_dist = px.bar(
-            dist, x="Season", y="Pct", color="Category",
-            color_discrete_map={"Below background":"#dde4e0","Above background":GREEN},
-            labels={"Pct":"Percent of observations"},
-            text="Pct", height=360, barmode="stack",
-        )
-        fig_dist.update_traces(
-            texttemplate="%{text:.1f}%", textposition="inside",
-            textfont=dict(family="IBM Plex Mono", color=WHITE, size=11),
-        )
-        layout_d = base_layout("Pixel Distribution Relative to NOAA Background", height=360)
-        fig_dist.update_layout(**layout_d)
-        st.plotly_chart(fig_dist, use_container_width=True)
-
-    with sa2:
-        enh = pd.DataFrame({
-            "Region": ["Northern Plains","Gulf Coast","Central Valley"],
-            "ppb":    [56.3, 75.9, 70.3],
-            "Peak":   [1976.2, 1990.7, 1985.2],
-        })
-        fig_enh = go.Figure(go.Bar(
-            x=enh["Region"], y=enh["ppb"],
-            marker=dict(
-                color=enh["ppb"],
-                colorscale=[[0,"#c8ddd8"],[1,GREEN]],
-                line=dict(color=BORDER, width=0.5),
-            ),
-            text=[f"+{v} ppb" for v in enh["ppb"]],
-            textfont=dict(family="IBM Plex Mono", color=BLACK, size=10),
-            textposition="outside",
-            hovertemplate="<b>%{x}</b><br>+%{y} ppb<br>Peak: %{customdata} ppb<extra></extra>",
-            customdata=enh["Peak"],
-        ))
-        layout_enh = base_layout("Peak Enhancement Above NOAA Background", height=360)
-        layout_enh["yaxis"]["title"] = "Enhancement (ppb)"
-        layout_enh["yaxis"]["range"] = [0, 92]
-        fig_enh.update_layout(**layout_enh)
-        st.plotly_chart(fig_enh, use_container_width=True)
+    enh = pd.DataFrame({
+        "Region": ["Northern Plains","Gulf Coast","Central Valley"],
+        "ppb":    [56.3, 75.9, 70.3],
+        "Peak":   [1976.2, 1990.7, 1985.2],
+    })
+    fig_enh = go.Figure(go.Bar(
+        x=enh["Region"], y=enh["ppb"],
+        marker=dict(
+            color=enh["ppb"],
+            colorscale=[[0,"#c8ddd8"],[1,GREEN]],
+            line=dict(color=BORDER, width=0.5),
+        ),
+        text=[f"+{v} ppb" for v in enh["ppb"]],
+        textfont=dict(family="IBM Plex Mono", color=BLACK, size=12),
+        textposition="outside",
+        hovertemplate="<b>%{x}</b><br>+%{y} ppb<br>Peak: %{customdata} ppb<extra></extra>",
+        customdata=enh["Peak"],
+    ))
+    layout_enh = base_layout("Peak Enhancement Above NOAA Background by Region", height=320)
+    layout_enh["yaxis"]["title"] = "Enhancement (ppb)"
+    layout_enh["yaxis"]["range"] = [0, 92]
+    fig_enh.update_layout(**layout_enh)
+    st.plotly_chart(fig_enh, use_container_width=True)
 
     st.markdown('<div class="sec-lbl">Summary Statistics</div>', unsafe_allow_html=True)
     summ = pd.DataFrame({
