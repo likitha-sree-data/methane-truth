@@ -8,7 +8,7 @@ st.set_page_config(
     page_title="Methane Truth | Satellite Emissions Analysis",
     page_icon=None,
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 st.markdown("""
@@ -22,10 +22,8 @@ st.markdown("""
 
 .stApp { background-color: #f5f4f0; }
 
-section[data-testid="stSidebar"] {
-    background-color: #1a1a1a;
-    border-right: none;
-}
+section[data-testid="stSidebar"] { display: none; }
+[data-testid="collapsedControl"] { display: none; }
 
 /* ── Hero headline block ── */
 .hero {
@@ -238,7 +236,7 @@ section[data-testid="stSidebar"] {
     border-radius: 0;
     padding: 0.6rem 1.2rem;
     font-weight: 400;
-    font-size: 0.83rem;
+    font-size: 1rem;
     border-bottom: 2px solid transparent;
     margin-bottom: -2px;
 }
@@ -357,56 +355,6 @@ total_obs = n_winter + n_summer
 
 
 # ── SIDEBAR ───────────────────────────────────────────────────────────────────
-with st.sidebar:
-    st.markdown("""
-    <div style="padding:0.5rem 0 1.4rem;">
-        <div class="sb-title">Methane Truth</div>
-        <div class="sb-sub">Satellite Emissions Analysis</div>
-    </div>
-    <hr class="sb-hr">
-    <span class="sb-lbl">Study Coverage</span>
-    <div class="sb-body">
-        <strong>304,611</strong> quality-filtered observations<br>
-        Winter: January 2023<br>
-        Summer: June to August 2023<br>
-        Continental USA, land pixels only
-    </div>
-    <hr class="sb-hr">
-    <span class="sb-lbl">NOAA Verified Background</span>
-    <div class="sb-body">
-        January 2023 &nbsp;<strong>1,919.93 ppb</strong><br>
-        Jun-Aug 2023 <strong>1,914.89 ppb</strong><br><br>
-        <span style="font-size:0.72rem; color:#666 !important;">
-        A fixed 1,870 ppb baseline overestimates<br>
-        enhancement by approx. 50 ppb for 2023 data.
-        </span>
-    </div>
-    <hr class="sb-hr">
-    <span class="sb-lbl">Quality Standard</span>
-    <div class="sb-body">
-        ESA TROPOMI qa_value greater than 0.5<br>
-        Plausibility: 1,600 to 2,200 ppb<br>
-        Land mask applied post-download
-    </div>
-    <hr class="sb-hr">
-    <span class="sb-lbl">Pipeline</span>
-    <div class="sb-body">
-        Python, xarray, Snowflake, dbt<br>
-        Streamlit, GitHub Pages
-    </div>
-    <hr class="sb-hr">
-    <span class="sb-lbl">Author</span>
-    <div class="sb-body">
-        <strong>Likitha Yarabarla</strong><br>
-        Climate Data Engineer<br>
-        <a href="https://linkedin.com/in/likitha-sree"
-        style="color:#1a6a3a !important; text-decoration:none;">LinkedIn</a>
-        &nbsp;·&nbsp;
-        <a href="https://github.com/likitha-sree-data/methane-truth"
-        style="color:#1a6a3a !important; text-decoration:none;">GitHub</a>
-    </div>
-    """, unsafe_allow_html=True)
-
 
 # ── HERO ──────────────────────────────────────────────────────────────────────
 st.markdown("""
