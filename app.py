@@ -11,285 +11,255 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Design direction: Berkeley Earth / Nature Climate Change publication standard
-# White page, hairline rules, Playfair Display for one headline only,
-# IBM Plex Sans for all UI, IBM Plex Mono for all data readouts.
-# Single accent: #0a7c6e (deep scientific teal from NOAA false-color CH4 imagery).
-# No gradients. No shadows. No rounded corners above 2px. No decoration.
-
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Georgia:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 *, html, body, [class*="css"] {
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     box-sizing: border-box;
 }
-.stApp { background-color: #ffffff; }
+
+.stApp { background-color: #f5f4f0; }
 
 section[data-testid="stSidebar"] {
-    background-color: #0d1b24;
-    border-right: 1px solid #1a2d3a;
+    background-color: #1a1a1a;
+    border-right: none;
 }
 
-/* Page header */
-.pub-header {
-    border-bottom: 2px solid #0a1014;
-    padding: 2rem 0 1.5rem;
+/* ── Hero headline block ── */
+.hero {
+    padding: 2.8rem 0 2rem;
+    border-bottom: 1px solid #ccc;
     margin-bottom: 2rem;
 }
-.pub-journal {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #0a7c6e;
-    margin-bottom: 0.9rem;
-}
-.pub-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.5rem;
+.hero-hed {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 2.6rem;
     font-weight: 700;
-    color: #0a1014;
-    line-height: 1.15;
-    margin: 0 0 0.8rem;
-    letter-spacing: -0.5px;
+    color: #111;
+    line-height: 1.18;
+    margin: 0 0 1rem;
+    max-width: 820px;
+    letter-spacing: -0.3px;
 }
-.pub-abstract {
-    font-size: 0.92rem;
-    color: #3a4a54;
+.hero-dek {
+    font-size: 1rem;
+    color: #444;
     line-height: 1.75;
     max-width: 720px;
     font-weight: 300;
-    margin: 0 0 1.4rem;
+    margin: 0 0 1.1rem;
 }
-.pub-meta {
-    display: flex;
-    gap: 0;
-    border-top: 1px solid #d0d8de;
-    border-bottom: 1px solid #d0d8de;
-    padding: 0.7rem 0;
+.hero-byline {
+    font-size: 0.8rem;
+    color: #888;
+    margin: 0;
+    line-height: 1.6;
 }
-.pub-meta-item {
-    padding: 0 2rem 0 0;
-    margin-right: 2rem;
-    border-right: 1px solid #d0d8de;
-}
-.pub-meta-item:last-child {
-    border-right: none;
-}
-.pub-meta-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: #7a9aaa;
-    display: block;
-    margin-bottom: 0.2rem;
-}
-.pub-meta-val {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.72rem;
-    color: #0a1014;
-    font-weight: 500;
-}
+.hero-byline a { color: #1a6a3a; text-decoration: none; }
+.hero-byline a:hover { text-decoration: underline; }
 
-/* KPI strip */
-.kpi-strip {
+/* ── KPI section ── */
+.kpi-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #888;
+    margin: 2rem 0 0.75rem;
+}
+.kpi-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    border: 1px solid #d0d8de;
-    border-right: none;
+    gap: 0;
+    border-top: 2px solid #111;
     margin-bottom: 2.5rem;
 }
 .kpi-cell {
-    padding: 1.3rem 1.4rem 1.1rem;
-    border-right: 1px solid #d0d8de;
-    border-top: 2px solid transparent;
-    background: #ffffff;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-left: none;
+    padding: 1.1rem 1.2rem 1rem;
 }
-.kpi-cell.hi { border-top-color: #0a7c6e; }
-.kpi-num {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 1.8rem;
+.kpi-cell:first-child { border-left: 1px solid #ddd; }
+.kpi-cell-label {
+    font-size: 0.78rem;
+    color: #555;
+    margin: 0 0 0.3rem;
+    font-weight: 400;
+    line-height: 1.3;
+}
+.kpi-cell-value {
+    font-family: Georgia, serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111;
+    margin: 0;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+}
+.kpi-cell-sub {
+    font-size: 0.75rem;
+    color: #1a6a3a;
+    margin: 0.3rem 0 0;
     font-weight: 500;
-    color: #0a1014;
-    letter-spacing: -1px;
-    line-height: 1;
-    margin: 0;
-}
-.kpi-num.teal { color: #0a7c6e; }
-.kpi-lbl {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.58rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: #7a9aaa;
-    margin: 0.5rem 0 0.2rem;
-}
-.kpi-note {
-    font-size: 0.74rem;
-    color: #9ab0bc;
-    margin: 0;
-    line-height: 1.4;
 }
 
-/* Section label */
-.sec-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    color: #0a7c6e;
-    margin: 2.5rem 0 1rem;
-    padding-bottom: 0.6rem;
-    border-bottom: 1px solid #d0d8de;
-}
-
-/* Finding cards */
+/* ── Finding cards ── */
 .find-card {
-    background: #f8fafa;
-    border: 1px solid #d0d8de;
-    border-top: 2px solid #0a7c6e;
-    padding: 1.5rem;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-top: 3px solid #111;
+    padding: 1.4rem;
     height: 100%;
 }
 .find-region {
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #0a1014;
-    margin: 0 0 0.15rem;
+    font-family: Georgia, serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111;
+    margin: 0 0 0.1rem;
 }
 .find-geo {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.65rem;
-    color: #7a9aaa;
+    font-size: 0.72rem;
+    color: #888;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 0.9rem;
+    letter-spacing: 0.8px;
+    margin-bottom: 0.85rem;
 }
 .find-val {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 2rem;
-    font-weight: 500;
-    color: #0a7c6e;
+    font-family: Georgia, serif;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #1a6a3a;
     letter-spacing: -1px;
     margin: 0 0 0.1rem;
     line-height: 1;
 }
 .find-peak {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.68rem;
-    color: #5a7a8a;
+    font-size: 0.72rem;
+    color: #666;
     margin-bottom: 0.9rem;
+    font-family: 'IBM Plex Mono', monospace;
 }
 .find-detail {
-    font-size: 0.81rem;
-    color: #4a6070;
+    font-size: 0.82rem;
+    color: #444;
     line-height: 1.7;
     margin: 0;
-    border-top: 1px solid #d0d8de;
+    border-top: 1px solid #eee;
     padding-top: 0.85rem;
     font-weight: 300;
 }
 
-/* Callouts */
+/* ── Section label ── */
+.sec-lbl {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #888;
+    margin: 2.5rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #ccc;
+}
+
+/* ── Callouts ── */
 .callout {
-    background: #f4f8f7;
-    border-left: 3px solid #0a7c6e;
+    background: #fff;
+    border-left: 3px solid #1a6a3a;
     padding: 1rem 1.4rem;
     margin: 1.25rem 0;
-    font-size: 0.85rem;
-    color: #2a4a54;
+    font-size: 0.86rem;
+    color: #333;
     line-height: 1.8;
     font-weight: 300;
 }
-.callout strong { color: #0a1014; font-weight: 500; }
+.callout strong { color: #111; font-weight: 600; }
 
 .callout-warn {
-    background: #fdfaf4;
-    border-left: 3px solid #b07020;
+    background: #fff;
+    border-left: 3px solid #c07020;
     padding: 0.9rem 1.4rem;
     margin: 0.75rem 0;
     font-size: 0.83rem;
-    color: #5a4010;
+    color: #555;
     line-height: 1.75;
     font-weight: 300;
 }
-.callout-warn strong { color: #2a1a00; font-weight: 500; }
+.callout-warn strong { color: #111; font-weight: 600; }
 
-/* Sidebar */
-.sb-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
+/* ── Sidebar ── */
+.sb-title {
+    font-family: Georgia, serif;
+    font-size: 1.05rem;
     font-weight: 700;
-    color: #e8edf2 !important;
-    letter-spacing: -0.3px;
+    color: #f0ede8 !important;
 }
-.sb-tagline {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.58rem;
-    color: #0a7c6e !important;
+.sb-sub {
+    font-size: 0.68rem;
+    color: #1a6a3a !important;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-top: 0.2rem;
+    letter-spacing: 1.5px;
+    margin-top: 0.15rem;
+    font-weight: 500;
 }
 .sb-lbl {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.58rem;
-    letter-spacing: 2px;
+    font-size: 0.6rem;
+    font-weight: 600;
     text-transform: uppercase;
-    color: #0a7c6e !important;
-    margin-bottom: 0.4rem;
+    letter-spacing: 1.5px;
+    color: #888 !important;
+    margin-bottom: 0.35rem;
     display: block;
 }
 .sb-body {
     font-size: 0.8rem;
-    color: #6a8a9a !important;
+    color: #aaa !important;
     line-height: 1.75;
     font-weight: 300;
 }
-.sb-body strong { color: #a8bfcc !important; font-weight: 500; }
-.sb-hr { border: none; border-top: 1px solid #1a2d3a; margin: 1rem 0; }
+.sb-body strong { color: #ddd !important; font-weight: 500; }
+.sb-hr { border: none; border-top: 1px solid #333; margin: 1rem 0; }
 
-/* Tabs */
+/* ── Tabs ── */
 .stTabs [data-baseweb="tab-list"] {
-    background: #f8f9fa;
-    border: 1px solid #d0d8de;
-    border-radius: 2px;
-    padding: 0.15rem;
-    gap: 0.1rem;
+    background: #f5f4f0;
+    border-bottom: 2px solid #111;
+    border-radius: 0;
+    padding: 0;
+    gap: 0;
 }
 .stTabs [data-baseweb="tab"] {
     background: transparent;
-    color: #7a9aaa;
-    border-radius: 1px;
-    padding: 0.45rem 1.1rem;
+    color: #666;
+    border-radius: 0;
+    padding: 0.6rem 1.2rem;
     font-weight: 400;
     font-size: 0.83rem;
-    font-family: 'IBM Plex Sans', sans-serif;
-    letter-spacing: 0.2px;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
 }
 .stTabs [aria-selected="true"] {
-    background: #0a1014 !important;
-    color: #ffffff !important;
+    background: transparent !important;
+    color: #111 !important;
+    border-bottom: 2px solid #111 !important;
+    font-weight: 600 !important;
 }
 
-/* Footer */
+/* ── Footer ── */
 .pub-footer {
-    border-top: 2px solid #0a1014;
+    border-top: 1px solid #ccc;
     padding: 1.2rem 0;
     margin-top: 3rem;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.68rem;
-    color: #7a9aaa;
-    letter-spacing: 0.3px;
+    font-size: 0.75rem;
+    color: #888;
     display: flex;
     justify-content: space-between;
-    align-items: center;
 }
-.pub-footer a { color: #0a7c6e; text-decoration: none; }
+.pub-footer a { color: #1a6a3a; text-decoration: none; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -297,44 +267,43 @@ section[data-testid="stSidebar"] {
 # ── CONSTANTS ─────────────────────────────────────────────────────────────────
 BG_WINTER = 1919.93
 BG_SUMMER = 1914.89
-TEAL      = "#0a7c6e"
-NAVY      = "#0a1014"
-SLATE     = "#4a6070"
-BORDER    = "#d0d8de"
-PAGE      = "#ffffff"
-CARD      = "#f8fafa"
+GREEN     = "#1a6a3a"
+BLACK     = "#111111"
+GRAY      = "#555555"
+BORDER    = "#dddddd"
+PAGE      = "#f5f4f0"
+WHITE     = "#ffffff"
 
 TEAL_SCALE = [
-    [0.00, "#e4f0ee"],
-    [0.30, "#6abdb0"],
-    [0.60, "#0a7c6e"],
-    [0.85, "#065048"],
-    [1.00, "#021a18"],
+    [0.00, "#e8f0ee"],
+    [0.35, "#6aaa98"],
+    [0.65, "#1a6a3a"],
+    [1.00, "#0a2818"],
 ]
 
 def base_layout(title="", height=380):
     return dict(
-        paper_bgcolor=PAGE,
-        plot_bgcolor=CARD,
-        font=dict(family="IBM Plex Sans", color=SLATE, size=12),
+        paper_bgcolor=WHITE,
+        plot_bgcolor="#fafafa",
+        font=dict(family="Inter", color=GRAY, size=12),
         title=dict(
             text=title,
-            font=dict(family="IBM Plex Sans", color=NAVY, size=13, weight=600),
+            font=dict(family="Georgia, serif", color=BLACK, size=13),
             x=0,
         ),
         xaxis=dict(
-            gridcolor=BORDER, linecolor=BORDER,
-            tickfont=dict(family="IBM Plex Mono", color="#9ab0bc", size=10),
+            gridcolor="#eeeeee", linecolor="#dddddd",
+            tickfont=dict(family="IBM Plex Mono", color="#aaaaaa", size=10),
             zeroline=False,
         ),
         yaxis=dict(
-            gridcolor=BORDER, linecolor=BORDER,
-            tickfont=dict(family="IBM Plex Mono", color="#9ab0bc", size=10),
+            gridcolor="#eeeeee", linecolor="#dddddd",
+            tickfont=dict(family="IBM Plex Mono", color="#aaaaaa", size=10),
             zeroline=False,
         ),
         legend=dict(
-            bgcolor=PAGE, bordercolor=BORDER, borderwidth=1,
-            font=dict(family="IBM Plex Sans", color=SLATE, size=11),
+            bgcolor=WHITE, bordercolor=BORDER, borderwidth=1,
+            font=dict(family="Inter", color=GRAY, size=11),
         ),
         margin=dict(l=10, r=10, t=44, b=10),
         height=height,
@@ -360,7 +329,6 @@ def load_data():
             missing.append(fname)
     return dfs, missing
 
-
 @st.cache_data
 def sector_data():
     return pd.DataFrame({
@@ -372,7 +340,6 @@ def sector_data():
         "mt_ch4": [10.8, 8.4, 6.2, 2.4, 2.1, 1.6, 1.5, 2.5],
         "pct":    [30.4, 23.7, 17.5, 6.8, 5.9, 4.5, 4.2, 7.0],
     })
-
 
 dfs, missing_files = load_data()
 winter_df = dfs["winter"]
@@ -393,8 +360,8 @@ total_obs = n_winter + n_summer
 with st.sidebar:
     st.markdown("""
     <div style="padding:0.5rem 0 1.4rem;">
-        <div class="sb-logo">Methane Truth</div>
-        <div class="sb-tagline">Satellite Emissions Analysis</div>
+        <div class="sb-title">Methane Truth</div>
+        <div class="sb-sub">Satellite Emissions Analysis</div>
     </div>
     <hr class="sb-hr">
     <span class="sb-lbl">Study Coverage</span>
@@ -407,9 +374,9 @@ with st.sidebar:
     <hr class="sb-hr">
     <span class="sb-lbl">NOAA Verified Background</span>
     <div class="sb-body">
-        January 2023 &nbsp;&nbsp;<strong>1,919.93 ppb</strong><br>
-        Jun-Aug 2023 &nbsp;<strong>1,914.89 ppb</strong><br><br>
-        <span style="font-size:0.72rem; color:#3a5a6a !important;">
+        January 2023 &nbsp;<strong>1,919.93 ppb</strong><br>
+        Jun-Aug 2023 <strong>1,914.89 ppb</strong><br><br>
+        <span style="font-size:0.72rem; color:#666 !important;">
         A fixed 1,870 ppb baseline overestimates<br>
         enhancement by approx. 50 ppb for 2023 data.
         </span>
@@ -418,7 +385,7 @@ with st.sidebar:
     <span class="sb-lbl">Quality Standard</span>
     <div class="sb-body">
         ESA TROPOMI qa_value greater than 0.5<br>
-        Plausibility filter: 1,600 to 2,200 ppb<br>
+        Plausibility: 1,600 to 2,200 ppb<br>
         Land mask applied post-download
     </div>
     <hr class="sb-hr">
@@ -433,48 +400,34 @@ with st.sidebar:
         <strong>Likitha Yarabarla</strong><br>
         Climate Data Engineer<br>
         <a href="https://linkedin.com/in/likitha-sree"
-        style="color:#0a7c6e !important; text-decoration:none;">LinkedIn</a>
+        style="color:#1a6a3a !important; text-decoration:none;">LinkedIn</a>
         &nbsp;·&nbsp;
         <a href="https://github.com/likitha-sree-data/methane-truth"
-        style="color:#0a7c6e !important; text-decoration:none;">GitHub</a>
+        style="color:#1a6a3a !important; text-decoration:none;">GitHub</a>
     </div>
     """, unsafe_allow_html=True)
 
 
-# ── HEADER ────────────────────────────────────────────────────────────────────
+# ── HERO ──────────────────────────────────────────────────────────────────────
 st.markdown("""
-<div class="pub-header">
-    <div class="pub-journal">Satellite Emissions Analysis &nbsp;·&nbsp; ESA Sentinel-5P TROPOMI &nbsp;·&nbsp; NOAA GML &nbsp;·&nbsp; UNFCCC</div>
-    <h1 class="pub-title">Methane Truth</h1>
-    <p class="pub-abstract">
-        304,611 quality-filtered satellite observations over the continental United States,
-        January and June through August 2023. Only 14.1 percent of pixels detect methane
-        above the verified global background. Those pixels cluster with geographic precision
-        over three emission corridors, confirming satellite data as a geographic localization
-        instrument rather than a national inventory verification tool.
+<div class="hero">
+    <h1 class="hero-hed">
+        We analyzed 304,611 satellite methane readings over America.<br>
+        Here is what we found.
+    </h1>
+    <p class="hero-dek">
+        Only 14.1 percent of satellite pixels detect methane above the verified global background
+        over one of the world's largest emitters. But the pixels that do show elevation cluster
+        with geographic precision over three known emission corridors: the Northern Plains,
+        the Gulf Coast, and California's Central Valley. The satellite tells you where.
+        It cannot tell you how much.
     </p>
-    <div class="pub-meta">
-        <div class="pub-meta-item">
-            <span class="pub-meta-label">Study Period</span>
-            <span class="pub-meta-val">Jan + Jun-Aug 2023</span>
-        </div>
-        <div class="pub-meta-item">
-            <span class="pub-meta-label">Instrument</span>
-            <span class="pub-meta-val">TROPOMI / Sentinel-5P</span>
-        </div>
-        <div class="pub-meta-item">
-            <span class="pub-meta-label">Resolution</span>
-            <span class="pub-meta-val">5.5 x 3.5 km per pixel</span>
-        </div>
-        <div class="pub-meta-item">
-            <span class="pub-meta-label">Background Source</span>
-            <span class="pub-meta-val">NOAA GML Monthly Means</span>
-        </div>
-        <div class="pub-meta-item">
-            <span class="pub-meta-label">Inventory Source</span>
-            <span class="pub-meta-val">UNFCCC via Climate Watch API</span>
-        </div>
-    </div>
+    <p class="hero-byline">
+        Analysis by <a href="https://linkedin.com/in/likitha-sree">Likitha Sree Yarabarla</a>
+        &nbsp;·&nbsp; Climate Data Engineer
+        &nbsp;·&nbsp; Data: ESA Copernicus, NOAA GML, UNFCCC via Climate Watch API
+        &nbsp;·&nbsp; <a href="https://github.com/likitha-sree-data/methane-truth">Full methodology on GitHub</a>
+    </p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -491,38 +444,39 @@ if missing_files:
 
 
 # ── KPI STRIP ─────────────────────────────────────────────────────────────────
+st.markdown('<div class="kpi-label">Key Figures</div>', unsafe_allow_html=True)
+
 c1, c2, c3, c4, c5 = st.columns(5)
 kpis = [
-    (f"{total_obs:,}", "Total Observations",     "Quality-filtered, land only",          False),
-    (f"{total_hs:,}", "Hotspot Pixels",           "Exceeding NOAA monthly mean",          False),
-    ("14.1%",          "Detection Rate",           "Pixels showing CH4 elevation",         True),
-    ("+75.9 ppb",      "Peak Enhancement",         "Gulf Coast, single pixel maximum",     True),
-    ("35.5 Mt CH4",    "Official 2022 Inventory",  "USA UNFCCC submission",                False),
+    ("Satellite observations",      f"{total_obs:,}",  "Quality-filtered, land only",           False),
+    ("Pixels above background",     f"{total_hs:,}",   "Exceeding NOAA monthly mean",           False),
+    ("Detection rate",              "14.1%",            "Pixels showing CH4 elevation",          True),
+    ("Peak enhancement",            "+75.9 ppb",        "Gulf Coast, single pixel maximum",      True),
+    ("Official 2022 inventory",     "35.5 Mt CH4",      "USA UNFCCC submission",                 False),
 ]
-for col, (val, label, note, hi) in zip([c1,c2,c3,c4,c5], kpis):
+for col, (label, val, sub, hi) in zip([c1,c2,c3,c4,c5], kpis):
     with col:
-        nc = "teal" if hi else ""
-        hc = "hi"   if hi else ""
+        vc = f"color:{GREEN};" if hi else ""
         st.markdown(f"""
-        <div class="kpi-cell {hc}">
-            <p class="kpi-num {nc}">{val}</p>
-            <p class="kpi-lbl">{label}</p>
-            <p class="kpi-note">{note}</p>
+        <div class="kpi-cell">
+            <div class="kpi-cell-label">{label}</div>
+            <div class="kpi-cell-value" style="{vc}">{val}</div>
+            <div class="kpi-cell-sub">{sub}</div>
         </div>
         """, unsafe_allow_html=True)
 
 
 # ── THREE FINDINGS ────────────────────────────────────────────────────────────
-st.markdown('<div class="sec-label">Primary Findings</div>', unsafe_allow_html=True)
+st.markdown('<div class="sec-lbl">Primary Findings</div>', unsafe_allow_html=True)
 
 fc1, fc2, fc3 = st.columns(3)
 findings = [
-    ("Northern Plains",      "Minnesota / North Dakota Border",
+    ("Northern Plains",           "Minnesota / North Dakota Border",
      "+56.3 ppb", "Peak 1,976.2 ppb · Winter 2023 · 485 hotspot pixels",
      "Winter signal at the MN-ND border. Consistent with thermogenic methane from "
      "Bakken formation oil and gas operations combined with agricultural wetland "
      "emissions. The seasonal winter peak is characteristic of O and G venting patterns."),
-    ("Gulf Coast",           "Texas / Louisiana Offshore Corridor",
+    ("Gulf Coast",                "Texas / Louisiana Offshore Corridor",
      "+75.9 ppb", "Peak 1,990.7 ppb · Summer 2023 · 1,271 hotspot pixels",
      "Highest single pixel in the dataset. Offshore petrochemical operations "
      "between Houston and New Orleans. Summer peak consistent with increased "
@@ -548,13 +502,12 @@ for col, (region, geo, val, peak, detail) in zip([fc1,fc2,fc3], findings):
 st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("""
 <div class="callout">
-<strong>On column dilution:</strong>
-The satellite mean concentration falls below the NOAA background for both seasons.
-This is not a data error. It is the expected behavior of passive column-integrated remote sensing.
-TROPOMI pixels are 5.5 x 3.5 km. Emission plumes dilute rapidly into background air at this scale.
-The 14.1 percent of pixels that show elevation are not randomly distributed.
-They cluster precisely over known source regions, confirming that satellite monitoring functions
-as a <strong>geographic localization instrument</strong>, not a national inventory verification tool.
+<strong>Why does the satellite mean fall below the NOAA background?</strong>
+This is not a data error. TROPOMI pixels are 5.5 x 3.5 km. Emission plumes from surface sources
+dilute rapidly into surrounding clean background air at this scale. The result: 85.9 percent of pixels
+measure background air, not plumes. The 14.1 percent that do show elevation are not randomly distributed.
+They cluster precisely over known source regions, confirming that satellite monitoring functions as
+a <strong>geographic localization instrument</strong>, not a national inventory verification tool.
 </div>
 """, unsafe_allow_html=True)
 
@@ -573,15 +526,14 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 # TAB 1: MAPS
 # ══════════════════════════════════════════════════════════════════════════════
 with tab1:
-    st.markdown('<div class="sec-label">Satellite Methane Concentration Maps</div>',
+    st.markdown('<div class="sec-lbl">Satellite Methane Concentration Maps</div>',
                 unsafe_allow_html=True)
     st.markdown(f"""
-    <p style="color:{SLATE}; font-size:0.86rem; margin-bottom:1.25rem;
+    <p style="color:{GRAY}; font-size:0.86rem; margin-bottom:1.25rem;
     max-width:740px; line-height:1.75; font-weight:300;">
     Each point represents an ESA Sentinel-5P TROPOMI pixel at 5.5 x 3.5 km resolution.
     The hotspot view renders all 43,086 above-background pixels without sampling.
     Full-dataset views sample 5,000 points for rendering performance.
-    Color encodes methane column concentration relative to the NOAA verified monthly background.
     </p>
     """, unsafe_allow_html=True)
 
@@ -602,31 +554,29 @@ with tab1:
             lats = np.concatenate([rng.normal(47.5,1.2,485), rng.normal(29.0,0.8,1271), rng.normal(36.5,1.0,1221)])
             lons = np.concatenate([rng.normal(-97.5,1.5,485), rng.normal(-91.5,1.2,1271), rng.normal(-120.0,0.8,1221)])
             ppbs = np.concatenate([rng.uniform(1920,1976,485), rng.uniform(1915,1991,1271), rng.uniform(1915,1985,1221)])
-            plot_df = pd.DataFrame({"latitude": lats, "longitude": lons, "methane_column_ppb": ppbs})
+            plot_df = pd.DataFrame({"latitude":lats,"longitude":lons,"methane_column_ppb":ppbs})
         cmin, cmax = 1915, 1992
         map_title  = "Emission Hotspots: Pixels Exceeding NOAA Verified Background"
         caption    = "All above-background pixels, winter and summer combined. No sampling applied."
         dot_sz     = 3
-
     elif "Winter" in map_choice:
         src = winter_df if winter_df is not None else pd.DataFrame({
-            "latitude":  np.random.uniform(30, 49, 5000),
-            "longitude": np.random.uniform(-125, -67, 5000),
-            "methane_column_ppb": np.random.normal(1904, 12, 5000),
+            "latitude": np.random.uniform(30,49,5000),
+            "longitude": np.random.uniform(-125,-67,5000),
+            "methane_column_ppb": np.random.normal(1904,12,5000),
         })
-        plot_df   = src.sample(min(5000, len(src)), random_state=42)
+        plot_df   = src.sample(min(5000,len(src)), random_state=42)
         cmin, cmax = 1875, 1980
         map_title  = "Winter Methane Concentrations: USA, January 2023"
         caption    = f"NOAA verified background: {BG_WINTER} ppb, January 2023"
         dot_sz     = 2
-
     else:
         src = summer_df if summer_df is not None else pd.DataFrame({
-            "latitude":  np.random.uniform(30, 49, 5000),
-            "longitude": np.random.uniform(-125, -67, 5000),
-            "methane_column_ppb": np.random.normal(1895, 15, 5000),
+            "latitude": np.random.uniform(30,49,5000),
+            "longitude": np.random.uniform(-125,-67,5000),
+            "methane_column_ppb": np.random.normal(1895,15,5000),
         })
-        plot_df   = src.sample(min(5000, len(src)), random_state=42)
+        plot_df   = src.sample(min(5000,len(src)), random_state=42)
         cmin, cmax = 1870, 1992
         map_title  = "Summer Methane Concentrations: USA, June to August 2023"
         caption    = f"NOAA verified background: {BG_SUMMER} ppb, summer 2023 average"
@@ -645,52 +595,49 @@ with tab1:
             opacity=0.9,
             colorbar=dict(
                 title=dict(text="CH4 (ppb)",
-                           font=dict(family="IBM Plex Mono", color=SLATE, size=10)),
-                tickfont=dict(family="IBM Plex Mono", color="#9ab0bc", size=9),
+                           font=dict(family="IBM Plex Mono", color=GRAY, size=10)),
+                tickfont=dict(family="IBM Plex Mono", color="#aaaaaa", size=9),
                 thickness=10, len=0.6,
-                bgcolor=PAGE, bordercolor=BORDER, x=1.01,
+                bgcolor=WHITE, bordercolor=BORDER, x=1.01,
             ),
         ),
         hovertemplate="%{customdata:.1f} ppb<br>%{lat:.3f}N %{lon:.3f}W<extra></extra>",
         customdata=plot_df["methane_column_ppb"],
     ))
-
-    pins = [
-        dict(lat=47.5,  lon=-97.5,  label="Northern Plains"),
-        dict(lat=29.0,  lon=-91.5,  label="Gulf Coast"),
-        dict(lat=36.5,  lon=-120.2, label="Central Valley"),
-    ]
-    for pin in pins:
+    for pin in [
+        dict(lat=47.5, lon=-97.5, label="Northern Plains"),
+        dict(lat=29.0, lon=-91.5, label="Gulf Coast"),
+        dict(lat=36.5, lon=-120.2, label="Central Valley"),
+    ]:
         fig_map.add_trace(go.Scattergeo(
             lat=[pin["lat"]], lon=[pin["lon"]],
             mode="markers+text",
-            marker=dict(size=9, color=TEAL, symbol="circle-open",
-                        line=dict(color=TEAL, width=2)),
+            marker=dict(size=9, color=GREEN, symbol="circle-open",
+                        line=dict(color=GREEN, width=2)),
             text=[pin["label"]],
-            textfont=dict(family="IBM Plex Mono", color=TEAL, size=9),
+            textfont=dict(family="IBM Plex Mono", color=GREEN, size=9),
             textposition="top right",
             hoverinfo="skip", showlegend=False,
         ))
 
     fig_map.update_layout(
         title=dict(text=map_title,
-                   font=dict(family="IBM Plex Sans", color=NAVY, size=13, weight=600), x=0),
+                   font=dict(family="Georgia, serif", color=BLACK, size=13), x=0),
         geo=dict(
             scope="usa",
             projection_type="albers usa",
-            showland=True,       landcolor="#edf1f4",
-            showocean=True,      oceancolor="#dce4ea",
-            showlakes=True,      lakecolor="#dce4ea",
-            showcoastlines=True, coastlinecolor="#b0bece",
-            showsubunits=True,   subunitcolor="#c4ceda",
+            showland=True,       landcolor="#eeecea",
+            showocean=True,      oceancolor="#dddbd8",
+            showlakes=True,      lakecolor="#dddbd8",
+            showcoastlines=True, coastlinecolor="#bbbbbb",
+            showsubunits=True,   subunitcolor="#cccccc",
             bgcolor=PAGE,
         ),
-        paper_bgcolor=PAGE,
+        paper_bgcolor=WHITE,
         margin=dict(l=0, r=100, t=44, b=0),
         height=540,
-        font=dict(family="IBM Plex Sans", color=SLATE),
+        font=dict(family="Inter", color=GRAY),
     )
-
     st.plotly_chart(fig_map, use_container_width=True)
     st.caption(caption + " · Source: ESA Copernicus Data Space L2 CH4 · qa_value greater than 0.5")
 
@@ -699,15 +646,14 @@ with tab1:
 # TAB 2: SECTOR ATTRIBUTION
 # ══════════════════════════════════════════════════════════════════════════════
 with tab2:
-    st.markdown('<div class="sec-label">USA Methane by Sector: UNFCCC 2022 Submission</div>',
+    st.markdown('<div class="sec-lbl">USA Methane by Sector: UNFCCC 2022 Submission</div>',
                 unsafe_allow_html=True)
     st.markdown(f"""
-    <p style="color:{SLATE}; font-size:0.86rem; margin-bottom:1.25rem;
+    <p style="color:{GRAY}; font-size:0.86rem; margin-bottom:1.25rem;
     max-width:740px; line-height:1.75; font-weight:300;">
-    The USA officially reports 35.5 Mt CH4 for 2022. Oil and gas systems and enteric
-    fermentation together account for 54 percent of that total. The three satellite hotspots
-    map geographically onto precisely these two sectors. That alignment is the core
-    validation this analysis provides.
+    The USA officially reports 35.5 Mt CH4 for 2022. Oil and gas systems and enteric fermentation
+    together account for 54 percent of that total. The three satellite hotspots map geographically
+    onto precisely these two sectors. That alignment is the core validation this analysis provides.
     </p>
     """, unsafe_allow_html=True)
 
@@ -716,16 +662,14 @@ with tab2:
 
     with sc1:
         fig_bar = go.Figure(go.Bar(
-            x=sd["mt_ch4"],
-            y=sd["sector"],
-            orientation="h",
+            x=sd["mt_ch4"], y=sd["sector"], orientation="h",
             marker=dict(
                 color=sd["mt_ch4"],
-                colorscale=[[0,"#d0e8e4"],[0.5,"#5ab0a4"],[1,TEAL]],
+                colorscale=[[0,"#c8ddd8"],[0.5,"#5a9a7a"],[1,GREEN]],
                 line=dict(color=BORDER, width=0.5),
             ),
             text=[f"{v:.1f} Mt" for v in sd["mt_ch4"]],
-            textfont=dict(family="IBM Plex Mono", color=NAVY, size=10),
+            textfont=dict(family="IBM Plex Mono", color=BLACK, size=10),
             textposition="outside",
             hovertemplate="<b>%{y}</b><br>%{x:.1f} Mt CH4<br>%{customdata:.1f}%<extra></extra>",
             customdata=sd["pct"],
@@ -739,25 +683,22 @@ with tab2:
 
     with sc2:
         fig_pie = go.Figure(go.Pie(
-            labels=sd["sector"],
-            values=sd["mt_ch4"],
-            hole=0.58,
+            labels=sd["sector"], values=sd["mt_ch4"], hole=0.56,
             marker=dict(
-                colors=[TEAL,"#5ab0a4","#3a9088","#2a7068",
-                        "#d0e8e4","#b0d4d0","#e4f0ee","#f0f8f7"],
-                line=dict(color=PAGE, width=2),
+                colors=[GREEN,"#5a9a7a","#3a7a5a","#2a6040",
+                        "#c8ddd8","#a8c8be","#e0eeea","#eef4f2"],
+                line=dict(color=WHITE, width=2),
             ),
-            textfont=dict(family="IBM Plex Mono", color=NAVY, size=9),
+            textfont=dict(family="IBM Plex Mono", color=BLACK, size=9),
             hovertemplate="<b>%{label}</b><br>%{value:.1f} Mt · %{percent}<extra></extra>",
         ))
         fig_pie.add_annotation(
-            text="35.5 Mt<br>CH4 2022",
-            x=0.5, y=0.5, showarrow=False,
-            font=dict(family="IBM Plex Mono", size=11, color=NAVY),
+            text="35.5 Mt<br>CH4 2022", x=0.5, y=0.5, showarrow=False,
+            font=dict(family="Georgia, serif", size=12, color=BLACK),
         )
         layout_pie = base_layout("Sector Share", height=380)
-        layout_pie["paper_bgcolor"] = PAGE
-        layout_pie["plot_bgcolor"]  = PAGE
+        layout_pie["paper_bgcolor"] = WHITE
+        layout_pie["plot_bgcolor"]  = WHITE
         layout_pie["margin"] = dict(l=0, r=0, t=44, b=0)
         fig_pie.update_layout(**layout_pie)
         st.plotly_chart(fig_pie, use_container_width=True)
@@ -769,35 +710,33 @@ with tab2:
     together represent 54 percent of the official US methane inventory.
     The Gulf Coast hotspot (+75.9 ppb) maps onto offshore oil and gas infrastructure.
     The Central Valley hotspot (+70.3 ppb) maps onto California's dairy sector.
-    The Northern Plains winter signal overlaps both Bakken formation O and G activity
-    and agricultural wetlands. The satellite does not verify the totals.
-    It verifies the <strong>geography</strong>.
+    The Northern Plains winter signal overlaps both Bakken formation activity and agricultural wetlands.
+    The satellite does not verify the totals. It verifies the <strong>geography</strong>.
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="sec-label">Official Inventory Trend 2015 to 2022</div>',
+    st.markdown('<div class="sec-lbl">Official Inventory Trend 2015 to 2022</div>',
                 unsafe_allow_html=True)
 
     if official is not None and "year" in official.columns:
         tr = official
     else:
         tr = pd.DataFrame({
-            "year":             list(range(2015, 2023)),
-            "reported_Mt_CH4": [36.1, 35.8, 35.5, 35.7, 35.3, 35.0, 35.4, 35.5],
+            "year": list(range(2015,2023)),
+            "reported_Mt_CH4": [36.1,35.8,35.5,35.7,35.3,35.0,35.4,35.5],
         })
 
     fig_tr = go.Figure()
     fig_tr.add_trace(go.Scatter(
         x=tr["year"], y=tr["reported_Mt_CH4"],
         mode="lines+markers",
-        line=dict(color=TEAL, width=2),
-        marker=dict(size=6, color=TEAL, line=dict(color=PAGE, width=1.5)),
-        fill="tozeroy",
-        fillcolor="rgba(10,124,110,0.06)",
+        line=dict(color=GREEN, width=2),
+        marker=dict(size=6, color=GREEN, line=dict(color=WHITE, width=1.5)),
+        fill="tozeroy", fillcolor="rgba(26,106,58,0.07)",
         hovertemplate="<b>%{x}</b> · %{y:.1f} Mt CH4<extra></extra>",
     ))
     layout_tr = base_layout("USA Official CH4: UNFCCC Annual Submissions (Mt CH4)", height=260)
-    layout_tr["xaxis"]["tickvals"] = list(range(2015, 2023))
+    layout_tr["xaxis"]["tickvals"] = list(range(2015,2023))
     layout_tr["yaxis"]["range"]    = [30, 42]
     fig_tr.update_layout(**layout_tr)
     st.plotly_chart(fig_tr, use_container_width=True)
@@ -807,7 +746,7 @@ with tab2:
 # TAB 3: SEASONAL ANALYSIS
 # ══════════════════════════════════════════════════════════════════════════════
 with tab3:
-    st.markdown('<div class="sec-label">Seasonal Analysis</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-lbl">Seasonal Analysis</div>', unsafe_allow_html=True)
 
     sa1, sa2 = st.columns(2)
 
@@ -820,17 +759,15 @@ with tab3:
         })
         fig_dist = px.bar(
             dist, x="Season", y="Pct", color="Category",
-            color_discrete_map={"Below background":"#d8e4ea","Above background":TEAL},
-            title="Pixel Distribution Relative to NOAA Background",
+            color_discrete_map={"Below background":"#dde4e0","Above background":GREEN},
             labels={"Pct":"Percent of observations"},
             text="Pct", height=360, barmode="stack",
         )
         fig_dist.update_traces(
             texttemplate="%{text:.1f}%", textposition="inside",
-            textfont=dict(family="IBM Plex Mono", color=NAVY, size=11),
+            textfont=dict(family="IBM Plex Mono", color=WHITE, size=11),
         )
-        layout_d = base_layout("", height=360)
-        layout_d["title"]["text"] = "Pixel Distribution Relative to NOAA Background"
+        layout_d = base_layout("Pixel Distribution Relative to NOAA Background", height=360)
         fig_dist.update_layout(**layout_d)
         st.plotly_chart(fig_dist, use_container_width=True)
 
@@ -844,11 +781,11 @@ with tab3:
             x=enh["Region"], y=enh["ppb"],
             marker=dict(
                 color=enh["ppb"],
-                colorscale=[[0,"#d0e8e4"],[1,TEAL]],
+                colorscale=[[0,"#c8ddd8"],[1,GREEN]],
                 line=dict(color=BORDER, width=0.5),
             ),
             text=[f"+{v} ppb" for v in enh["ppb"]],
-            textfont=dict(family="IBM Plex Mono", color=NAVY, size=10),
+            textfont=dict(family="IBM Plex Mono", color=BLACK, size=10),
             textposition="outside",
             hovertemplate="<b>%{x}</b><br>+%{y} ppb<br>Peak: %{customdata} ppb<extra></extra>",
             customdata=enh["Peak"],
@@ -859,16 +796,14 @@ with tab3:
         fig_enh.update_layout(**layout_enh)
         st.plotly_chart(fig_enh, use_container_width=True)
 
-    st.markdown('<div class="sec-label">Summary Statistics</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-lbl">Summary Statistics</div>', unsafe_allow_html=True)
     summ = pd.DataFrame({
         "Season": ["Winter: January 2023","Summer: Jun-Aug 2023","Combined"],
         "Observations": [f"{n_winter:,}",f"{n_summer:,}",f"{total_obs:,}"],
         "Satellite Mean (ppb)": [1904.7, 1894.9, 1899.8],
         "NOAA Background (ppb)": [BG_WINTER, BG_SUMMER, 1917.41],
         "Hotspot Pixels": [
-            f"{n_hs_w:,} (21.5%)",
-            f"{n_hs_s:,} (11.7%)",
-            f"{total_hs:,} (14.1%)",
+            f"{n_hs_w:,} (21.5%)",f"{n_hs_s:,} (11.7%)",f"{total_hs:,} (14.1%)",
         ],
         "Peak Enhancement": ["+56.3 ppb","+75.9 ppb","+75.9 ppb"],
     })
@@ -879,20 +814,20 @@ with tab3:
 # TAB 4: HOTSPOT DETAIL
 # ══════════════════════════════════════════════════════════════════════════════
 with tab4:
-    st.markdown('<div class="sec-label">Emission Hotspot Detail</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-lbl">Emission Hotspot Detail</div>', unsafe_allow_html=True)
 
     ht = pd.DataFrame({
-        "Region":             ["Northern Plains MN-ND","Gulf Coast TX-LA","CA Central Valley"],
-        "Season":             ["Winter","Summer","Summer"],
-        "Hotspot Pixels":     [485, 1271, 1221],
-        "Peak Conc. (ppb)":   [1976.2, 1990.7, 1985.2],
-        "Peak Enhancement":   ["+56.3 ppb","+75.9 ppb","+70.3 ppb"],
-        "Likely Source":      [
+        "Region":           ["Northern Plains MN-ND","Gulf Coast TX-LA","CA Central Valley"],
+        "Season":           ["Winter","Summer","Summer"],
+        "Hotspot Pixels":   [485, 1271, 1221],
+        "Peak Conc. (ppb)": [1976.2, 1990.7, 1985.2],
+        "Peak Enhancement": ["+56.3 ppb","+75.9 ppb","+70.3 ppb"],
+        "Likely Source":    [
             "Agricultural wetlands + Bakken O and G",
             "Offshore petrochemical, Gulf basin",
             "Dairy and rice agriculture",
         ],
-        "UNFCCC Sector":      ["Oil and Gas / Agriculture","Oil and Gas","Enteric Fermentation"],
+        "UNFCCC Sector":    ["Oil and Gas / Agriculture","Oil and Gas","Enteric Fermentation"],
     })
     st.dataframe(ht, hide_index=True, use_container_width=True)
 
@@ -901,39 +836,31 @@ with tab4:
 
     with hc1:
         src_w = winter_hs if winter_hs is not None else pd.DataFrame(
-            {"methane_column_ppb": np.random.normal(1930,12,n_hs_w).clip(BG_WINTER, 1985)})
+            {"methane_column_ppb": np.random.normal(1930,12,n_hs_w).clip(BG_WINTER,1985)})
         fig_wh = px.histogram(
             src_w, x="methane_column_ppb", nbins=50,
-            title=f"Winter Hotspot Distribution: {n_hs_w:,} pixels",
             labels={"methane_column_ppb":"CH4 (ppb)","count":"Pixels"},
-            color_discrete_sequence=[TEAL], height=340,
+            color_discrete_sequence=[GREEN], height=340,
         )
-        fig_wh.add_vline(
-            x=BG_WINTER, line_dash="dot", line_color="#b06020", line_width=1.5,
-            annotation_text=f"Background {BG_WINTER} ppb",
-            annotation_font_color="#b06020", annotation_font_size=9,
-        )
-        layout_wh = base_layout("", height=340)
-        layout_wh["title"]["text"] = f"Winter Hotspot Distribution: {n_hs_w:,} pixels"
+        fig_wh.add_vline(x=BG_WINTER, line_dash="dot", line_color="#c07020", line_width=1.5,
+                         annotation_text=f"Background {BG_WINTER} ppb",
+                         annotation_font_color="#c07020", annotation_font_size=9)
+        layout_wh = base_layout(f"Winter Hotspot Distribution: {n_hs_w:,} pixels", height=340)
         fig_wh.update_layout(**layout_wh)
         st.plotly_chart(fig_wh, use_container_width=True)
 
     with hc2:
         src_s = summer_hs if summer_hs is not None else pd.DataFrame(
-            {"methane_column_ppb": np.random.normal(1925,15,n_hs_s).clip(BG_SUMMER, 1992)})
+            {"methane_column_ppb": np.random.normal(1925,15,n_hs_s).clip(BG_SUMMER,1992)})
         fig_sh = px.histogram(
             src_s, x="methane_column_ppb", nbins=50,
-            title=f"Summer Hotspot Distribution: {n_hs_s:,} pixels",
             labels={"methane_column_ppb":"CH4 (ppb)","count":"Pixels"},
-            color_discrete_sequence=["#065048"], height=340,
+            color_discrete_sequence=["#0a4028"], height=340,
         )
-        fig_sh.add_vline(
-            x=BG_SUMMER, line_dash="dot", line_color="#b06020", line_width=1.5,
-            annotation_text=f"Background {BG_SUMMER} ppb",
-            annotation_font_color="#b06020", annotation_font_size=9,
-        )
-        layout_sh = base_layout("", height=340)
-        layout_sh["title"]["text"] = f"Summer Hotspot Distribution: {n_hs_s:,} pixels"
+        fig_sh.add_vline(x=BG_SUMMER, line_dash="dot", line_color="#c07020", line_width=1.5,
+                         annotation_text=f"Background {BG_SUMMER} ppb",
+                         annotation_font_color="#c07020", annotation_font_size=9)
+        layout_sh = base_layout(f"Summer Hotspot Distribution: {n_hs_s:,} pixels", height=340)
         fig_sh.update_layout(**layout_sh)
         st.plotly_chart(fig_sh, use_container_width=True)
 
@@ -952,7 +879,7 @@ with tab4:
 # TAB 5: METHODOLOGY
 # ══════════════════════════════════════════════════════════════════════════════
 with tab5:
-    st.markdown('<div class="sec-label">Methodology</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-lbl">Methodology</div>', unsafe_allow_html=True)
 
     mc1, mc2 = st.columns(2)
 
@@ -973,8 +900,8 @@ with tab5:
 
         **Background values**
         NOAA GML monthly means queried for each study period.
-        A historical fixed value of 1,870 ppb overestimates enhancement
-        by approximately 50 ppb for 2023 data. Period-specific values are required.
+        A fixed 1,870 ppb baseline overestimates enhancement by approximately 50 ppb
+        for 2023 data. Period-specific values are required.
 
         **Data warehouse**
         Snowflake (free trial). Four schemas: RAW, STAGING, INTERMEDIATE, MARTS.
@@ -1001,7 +928,7 @@ with tab5:
 
         **Orbital sampling bias**
         Cloud cover systematically reduces valid observations in certain regions and seasons.
-        No sampling correction is applied.
+        No sampling correction applied.
 
         **No uncertainty quantification**
         Implied emission ranges are not reported as confidence intervals.
@@ -1018,7 +945,7 @@ with tab5:
         Zero proprietary data used.
         """)
 
-    st.markdown('<div class="sec-label">Citations</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-lbl">Citations</div>', unsafe_allow_html=True)
     st.markdown("""
     - ESA Sentinel-5P TROPOMI Level 2 Methane Product User Manual. sentinel.esa.int
     - NOAA Global Monitoring Laboratory. gml.noaa.gov/ccgg/trends_ch4
