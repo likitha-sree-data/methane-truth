@@ -22,14 +22,29 @@ st.markdown("""
 
 .stApp { background-color: #f5f4f0; }
 
-section[data-testid="stSidebar"] { display: none; }
-[data-testid="collapsedControl"] { display: none; }
+section[data-testid="stSidebar"] { display: none !important; }
+[data-testid="collapsedControl"] { display: none !important; }
 
+/* Target every layer Streamlit uses to reserve sidebar space */
 .block-container {
     max-width: 100% !important;
-    padding-left: 4rem !important;
-    padding-right: 4rem !important;
+    width: 100% !important;
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
     padding-top: 1rem !important;
+}
+[data-testid="stAppViewContainer"] > section:first-child {
+    width: 0px !important;
+    min-width: 0px !important;
+}
+[data-testid="stAppViewContainer"] {
+    flex-direction: row !important;
+}
+[data-testid="stAppViewBlockContainer"] {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
 }
 
 /* ── Hero headline block ── */
