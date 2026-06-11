@@ -22,8 +22,22 @@ st.markdown("""
 
 .stApp { background-color: #f5f4f0; }
 
+.block-container {
+    max-width: 1200px !important;
+    padding-left: 4rem !important;
+    padding-right: 4rem !important;
+    padding-top: 1rem !important;
+}
+
 section[data-testid="stSidebar"] { display: none; }
 [data-testid="collapsedControl"] { display: none; }
+
+/* Kill the reserved sidebar gap and use full width */
+.block-container {
+    max-width: 100% !important;
+    padding-left: 4rem !important;
+    padding-right: 4rem !important;
+}
 
 /* ── Hero headline block ── */
 .hero {
@@ -33,24 +47,24 @@ section[data-testid="stSidebar"] { display: none; }
 }
 .hero-hed {
     font-family: Georgia, 'Times New Roman', serif;
-    font-size: 2.6rem;
+    font-size: 3.2rem;
     font-weight: 700;
     color: #111;
-    line-height: 1.18;
-    margin: 0 0 1rem;
-    max-width: 820px;
-    letter-spacing: -0.3px;
+    line-height: 1.15;
+    margin: 0 0 1.2rem;
+    max-width: 900px;
+    letter-spacing: -0.5px;
 }
 .hero-dek {
-    font-size: 1rem;
+    font-size: 1.15rem;
     color: #444;
-    line-height: 1.75;
-    max-width: 720px;
+    line-height: 1.8;
+    max-width: 780px;
     font-weight: 300;
-    margin: 0 0 1.1rem;
+    margin: 0 0 1.2rem;
 }
 .hero-byline {
-    font-size: 0.8rem;
+    font-size: 0.92rem;
     color: #888;
     margin: 0;
     line-height: 1.6;
@@ -60,7 +74,7 @@ section[data-testid="stSidebar"] { display: none; }
 
 /* ── KPI section ── */
 .kpi-label {
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1.5px;
@@ -79,19 +93,19 @@ section[data-testid="stSidebar"] { display: none; }
     border: 1px solid #ddd;
     border-top: none;
     border-left: none;
-    padding: 1.1rem 1.2rem 1rem;
+    padding: 1.3rem 1.4rem 1.1rem;
 }
 .kpi-cell:first-child { border-left: 1px solid #ddd; }
 .kpi-cell-label {
-    font-size: 0.78rem;
+    font-size: 0.9rem;
     color: #555;
-    margin: 0 0 0.3rem;
+    margin: 0 0 0.35rem;
     font-weight: 400;
     line-height: 1.3;
 }
 .kpi-cell-value {
     font-family: Georgia, serif;
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 700;
     color: #111;
     margin: 0;
@@ -99,9 +113,9 @@ section[data-testid="stSidebar"] { display: none; }
     letter-spacing: -0.5px;
 }
 .kpi-cell-sub {
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     color: #1a6a3a;
-    margin: 0.3rem 0 0;
+    margin: 0.35rem 0 0;
     font-weight: 500;
 }
 
@@ -115,13 +129,13 @@ section[data-testid="stSidebar"] { display: none; }
 }
 .find-region {
     font-family: Georgia, serif;
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: #111;
     margin: 0 0 0.1rem;
 }
 .find-geo {
-    font-size: 0.72rem;
+    font-size: 0.8rem;
     color: #888;
     text-transform: uppercase;
     letter-spacing: 0.8px;
@@ -129,7 +143,7 @@ section[data-testid="stSidebar"] { display: none; }
 }
 .find-val {
     font-family: Georgia, serif;
-    font-size: 2.1rem;
+    font-size: 2.4rem;
     font-weight: 700;
     color: #1a6a3a;
     letter-spacing: -1px;
@@ -137,15 +151,15 @@ section[data-testid="stSidebar"] { display: none; }
     line-height: 1;
 }
 .find-peak {
-    font-size: 0.72rem;
+    font-size: 0.8rem;
     color: #666;
     margin-bottom: 0.9rem;
     font-family: 'IBM Plex Mono', monospace;
 }
 .find-detail {
-    font-size: 0.82rem;
+    font-size: 0.9rem;
     color: #444;
-    line-height: 1.7;
+    line-height: 1.75;
     margin: 0;
     border-top: 1px solid #eee;
     padding-top: 0.85rem;
@@ -154,7 +168,7 @@ section[data-testid="stSidebar"] { display: none; }
 
 /* ── Section label ── */
 .sec-lbl {
-    font-size: 0.65rem;
+    font-size: 0.78rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1.5px;
@@ -168,11 +182,11 @@ section[data-testid="stSidebar"] { display: none; }
 .callout {
     background: #fff;
     border-left: 3px solid #1a6a3a;
-    padding: 1rem 1.4rem;
+    padding: 1.1rem 1.4rem;
     margin: 1.25rem 0;
-    font-size: 0.86rem;
+    font-size: 0.96rem;
     color: #333;
-    line-height: 1.8;
+    line-height: 1.85;
     font-weight: 300;
 }
 .callout strong { color: #111; font-weight: 600; }
@@ -182,9 +196,9 @@ section[data-testid="stSidebar"] { display: none; }
     border-left: 3px solid #c07020;
     padding: 0.9rem 1.4rem;
     margin: 0.75rem 0;
-    font-size: 0.83rem;
+    font-size: 0.92rem;
     color: #555;
-    line-height: 1.75;
+    line-height: 1.8;
     font-weight: 300;
 }
 .callout-warn strong { color: #111; font-weight: 600; }
@@ -283,7 +297,7 @@ def base_layout(title="", height=380):
     return dict(
         paper_bgcolor=WHITE,
         plot_bgcolor="#fafafa",
-        font=dict(family="Inter", color=GRAY, size=12),
+        font=dict(family="Inter", color=GRAY, size=13),
         title=dict(
             text=title,
             font=dict(family="Georgia, serif", color=BLACK, size=13),
@@ -477,7 +491,7 @@ with tab1:
     st.markdown('<div class="sec-lbl">Satellite Methane Concentration Maps</div>',
                 unsafe_allow_html=True)
     st.markdown(f"""
-    <p style="color:{GRAY}; font-size:0.86rem; margin-bottom:1.25rem;
+    <p style="color:{GRAY}; font-size:1rem; margin-bottom:1.25rem;
     max-width:740px; line-height:1.75; font-weight:300;">
     Each point represents an ESA Sentinel-5P TROPOMI pixel at 5.5 x 3.5 km resolution.
     The hotspot view renders all 43,086 above-background pixels without sampling.
@@ -597,7 +611,7 @@ with tab2:
     st.markdown('<div class="sec-lbl">USA Methane by Sector: UNFCCC 2022 Submission</div>',
                 unsafe_allow_html=True)
     st.markdown(f"""
-    <p style="color:{GRAY}; font-size:0.86rem; margin-bottom:1.25rem;
+    <p style="color:{GRAY}; font-size:1rem; margin-bottom:1.25rem;
     max-width:740px; line-height:1.75; font-weight:300;">
     The USA officially reports 35.5 Mt CH4 for 2022. Oil and gas systems and enteric fermentation
     together account for 54 percent of that total. The three satellite hotspots map geographically
